@@ -1,7 +1,6 @@
-import QtQuick 2.7
-import QtQuick.Window 2.2
-import QtQuick.Layouts 1.1
-import QtQuick.Controls 2.1
+import QtQuick 2.2
+import QtQuick.Window 2.0
+import QtQuick.Controls 1.0
 
 Window {
     id: root
@@ -74,6 +73,8 @@ Window {
         property int initialWidth
         property int initialHeight
         property int initialPixelDensity
+
+        property int textHeight: 30
     }
 
     Connections {
@@ -89,14 +90,14 @@ Window {
     //**********************
     // GUI
     //
-    ColumnLayout {
+    Column {
         id: column
         spacing: 1
         width: 100
 
         Button {
             text: "Close"
-            Layout.fillWidth: true
+            width: parent.width
             onClicked: {
                 root.close()
             }
@@ -104,7 +105,7 @@ Window {
 
         Button {
             text: "Reset"
-            Layout.fillWidth: true
+            width: parent.width
             onClicked: {
                 root.setWindowWidth(d.initialWidth)
                 root.setWindowHeight(d.initialHeight)
@@ -113,16 +114,17 @@ Window {
         }
 
         Text {
-            Layout.fillWidth: true
-            wrapMode: Text.Wrap
             text: "DPI"
-            horizontalAlignment: Text.AlignHCenter
             color: "white"
-            padding: 10
+            height: d.textHeight
+            width: parent.width
+            wrapMode: Text.Wrap
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         Row {
-            Layout.fillWidth: true
+            width: parent.width
             height: childrenRect.height
             spacing: 0
 
@@ -169,17 +171,18 @@ Window {
         }
 
         Text {
-            Layout.fillWidth: true
-            wrapMode: Text.Wrap
             text: "Width"
-            horizontalAlignment: Text.AlignHCenter
             color: "white"
-            padding: 10
+            height: d.textHeight
+            width: parent.width
+            wrapMode: Text.Wrap
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         Row {
             id: row
-            Layout.fillWidth: true
+            width: parent.width
             height: childrenRect.height
             spacing: 0
 
@@ -226,16 +229,17 @@ Window {
         }
 
         Text {
-            Layout.fillWidth: true
-            wrapMode: Text.Wrap
             text: "Height"
-            horizontalAlignment: Text.AlignHCenter
             color: "white"
-            padding: 10
+            width: parent.width
+            height: d.textHeight
+            wrapMode: Text.Wrap
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         Row {
-            Layout.fillWidth: true
+            width: parent.width
             height: childrenRect.height
             spacing: 0
 
@@ -282,7 +286,7 @@ Window {
         }
 
         Button {
-            width: parent.width / 4
+            width: parent.width
             text: (appWindow.height > appWindow.width) ? "Landscape" : "Portrait"
             onClicked: {
                 var height = appWindow.height
@@ -292,19 +296,20 @@ Window {
         }
 
         Text {
-            Layout.fillWidth: true
-            wrapMode: Text.Wrap
             text: "Sizes"
-            horizontalAlignment: Text.AlignHCenter
+            width: parent.width
+            height: d.textHeight
             color: "white"
-            padding: 10
+            wrapMode: Text.Wrap
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         Repeater {
             model: root.resolutions
 
             Button {
-                Layout.fillWidth: true
+                width: parent.width
                 text: model.width + " x " + model.height
                 onClicked: {
                     root.setWindowWidth(model.width)
