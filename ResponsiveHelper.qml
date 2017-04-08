@@ -23,7 +23,7 @@ Item {
     readonly property int initialPixelDensity: d.initialPixelDensity
 
     property real pixelDensity: Screen.pixelDensity
-    readonly property real dpi: pixelDensity * 25.4
+    readonly property real dpi: (pixelDensity * 25.4).toFixed()
 
     //**********************
     // Public functions
@@ -62,9 +62,9 @@ Item {
         id: d
         property int initialWidth
         property int initialHeight
-        property int initialPixelDensity
+        property real initialPixelDensity
 
-        property int textHeight: 30
+        property int textHeight: 20
     }
 
     Loader {
@@ -121,6 +121,11 @@ Item {
                     }
                 }
 
+                Item {
+                    width: parent.width
+                    height: 10
+                }
+
                 Button {
                     text: "Reset"
                     width: parent.width
@@ -148,7 +153,7 @@ Item {
                     width: parent.width
                     wrapMode: Text.Wrap
                     horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
+                    verticalAlignment: Text.AlignBottom
                 }
 
                 Row {
@@ -205,7 +210,7 @@ Item {
                     width: parent.width
                     wrapMode: Text.Wrap
                     horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
+                    verticalAlignment: Text.AlignBottom
                 }
 
                 Row {
@@ -263,7 +268,7 @@ Item {
                     height: d.textHeight
                     wrapMode: Text.Wrap
                     horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
+                    verticalAlignment: Text.AlignBottom
                 }
 
                 Row {
@@ -320,7 +325,7 @@ Item {
                     color: "white"
                     wrapMode: Text.Wrap
                     horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
+                    verticalAlignment: Text.AlignBottom
                     visible: root.presets.count > 0
                 }
 
