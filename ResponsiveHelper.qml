@@ -39,8 +39,19 @@ Item {
     function setWindowWidth(value) {
         var newWidth = (1*value).toFixed(0);
         var diff = value - appWindow.width;
-        if (diff < 0 || (diff > 0 && appWindow.x > diff))
-            appWindow.x -= diff;
+
+        // Move the application window to keep our window at the same spot when possible
+        if (root.position === Qt.LeftEdge) {
+            var availableSpace = Screen.desktopAvailableWidth - appWindow.x - appWindow.width;
+            if (diff > 0 && availableSpace <= diff)
+                appWindow.x -= diff - availableSpace;
+        }
+        else {
+            if (diff < 0)
+                appWindow.x -= diff;
+            else if (appWindow.x > 0)
+                appWindow.x = Math.max(0, appWindow.x - diff)
+        }
 
         appWindow.width = value;
     }
