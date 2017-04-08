@@ -32,21 +32,19 @@ Window {
     height: 800
 
     // Place it in a Loader to avoid loading it in production
-    Loader {
+    ResponsiveHelper {
         active: true
-        sourceComponent: ResponsiveHelper {
-            appWindow: window
+        appWindow: window
 
-            // List your favorite resolutions to test your application
-            resolutions: ListModel {
-                ListElement { width: 720; height: 1024 }
-                ListElement { width: 480; height: 800 }
-            }
-
-            // Handle dpi or pixelDensity changes as you wish, instead of "Screen.pixelDensity"
-            onDpiChanged: { }
-            onPixelDensityChanged: { }
+        // List your favorite resolutions to test your application
+        resolutions: ListModel {
+            ListElement { width: 720; height: 1024 }
+            ListElement { width: 480; height: 800 }
         }
+
+        // Handle dpi or pixelDensity changes as you wish, instead of "Screen.pixelDensity"
+        onDpiChanged: { }
+        onPixelDensityChanged: { }
     }
 }
 ```
