@@ -10,8 +10,8 @@ Item {
     //
     property bool active: true
     property Window appWindow
-    property ListModel resolutions: ListModel {
-        ListElement { width: 480; height: 800 }
+    property ListModel presets: ListModel {
+        ListElement { width: 480; height: 800; dpi: 150 }
         ListElement { width: 1024; height: 720 }
     }
 
@@ -72,6 +72,10 @@ Item {
         sourceComponent: responsiveHelperComponent
     }
 
+
+    //**********************
+    // GUI
+    //
     Component {
         id: responsiveHelperComponent
 
@@ -104,13 +108,10 @@ Item {
                 }
             }
 
-            //**********************
-            // GUI
-            //
             Column {
                 id: column
                 spacing: 1
-                width: 100
+                width: 125
 
                 Button {
                     text: "Hide"
@@ -127,6 +128,16 @@ Item {
                         root.setWindowWidth(d.initialWidth)
                         root.setWindowHeight(d.initialHeight)
                         root.pixelDensity = d.initialPixelDensity
+                    }
+                }
+
+                Button {
+                    width: parent.width
+                    text: (appWindow.height > appWindow.width) ? "Landscape" : "Portrait"
+                    onClicked: {
+                        var height = appWindow.height
+                        root.setWindowHeight(root.appWindow.width)
+                        root.setWindowWidth(height)
                     }
                 }
 
@@ -302,35 +313,35 @@ Item {
                     }
                 }
 
-                Button {
-                    width: parent.width
-                    text: (appWindow.height > appWindow.width) ? "Landscape" : "Portrait"
-                    onClicked: {
-                        var height = appWindow.height
-                        root.setWindowHeight(root.appWindow.width)
-                        root.setWindowWidth(height)
-                    }
-                }
-
                 Text {
-                    text: "Sizes"
+                    text: "Presets"
                     width: parent.width
                     height: d.textHeight
                     color: "white"
                     wrapMode: Text.Wrap
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
+                    visible: root.presets.count > 0
                 }
 
                 Repeater {
-                    model: root.resolutions
+                    model: root.presets
 
                     Button {
                         width: parent.width
-                        text: model.width + " x " + model.height
+                        text: {
+                            var label = model.width + " x " + model.height;
+                            if (model.dpi)
+                                label += " (" + model.dpi + "dpi)";
+
+                            return label;
+                        }
                         onClicked: {
                             root.setWindowWidth(model.width)
                             root.setWindowHeight(model.height)
+
+                            if (model.dpi)
+                                root.setDpi(model.dpi)
                         }
                     }
                 }

@@ -13,9 +13,9 @@ Window {
         appWindow: window
         active: true // Can be disabled in production environment
 
-        // List your favorite resolutions to test your application
-        resolutions: ListModel {
-            ListElement { width: 720; height: 1024 }
+        // List the presets (resolution, dpi) shown as shortcuts for your application
+        presets: ListModel {
+            ListElement { width: 720; height: 1024; dpi: 150}
             ListElement { width: 480; height: 800 }
         }
 
