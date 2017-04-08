@@ -8,30 +8,39 @@ Item {
     //**********************
     // Public input properties
     //
+    // Load or unloads the helper window
     property bool active: true
+
+    // Window element of the target application to test
     property Window appWindow
+
+    // List of presets to display
     property ListModel presets: ListModel {
         ListElement { width: 480; height: 800; dpi: 150 }
         ListElement { width: 1024; height: 720 }
     }
 
+    // Align helper window on "Qt.LeftEdge" or "Qt.RightEdge" of the application
+    property int position: Qt.RightEdge
+    // Distance from the edge
+    property int distanceFromEdge: 20
+
     //**********************
     // Public properties
     //
+    // Custom pixel density value
+    property real pixelDensity: Screen.pixelDensity
+    // Custom DPI value
+    readonly property real dpi: (pixelDensity * 25.4).toFixed()
+
+    // Initial application window settings
     readonly property int initialWidth: d.initialWidth
     readonly property int initialHeight: d.initialHeight
     readonly property int initialPixelDensity: d.initialPixelDensity
 
-    property real pixelDensity: Screen.pixelDensity
-    readonly property real dpi: (pixelDensity * 25.4).toFixed()
-
     //**********************
     // Public functions
     //
-    function resetPixelDensity() {
-        pixelDensity = Screen.pixelDensity;
-    }
-
     function setDpi(dpiValue) {
         pixelDensity = dpiValue / 25.4;
     }
@@ -66,14 +75,13 @@ Item {
     onAppWindowChanged: {
         d.initialWidth = appWindow.width;
         d.initialHeight = appWindow.height;
-        d.initialPixelDensity = Screen.pixelDensity;
     }
 
     QtObject {
         id: d
         property int initialWidth
         property int initialHeight
-        property real initialPixelDensity
+        property real initialPixelDensity: Screen.pixelDensity
 
         property int textHeight: 20
     }
@@ -93,7 +101,12 @@ Item {
         Window {
             id: helperWindow
             visible: true
-            x: appWindow.x + appWindow.width + 20
+            x: {
+                if (root.position === Qt.LeftEdge)
+                    return appWindow.x - helperWindow.width - root.distanceFromEdge
+                else
+                    return appWindow.x + appWindow.width + root.distanceFromEdge
+            }
             y: appWindow.y
             width: column.width
             height: column.height
