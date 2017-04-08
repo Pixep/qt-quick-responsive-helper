@@ -11,7 +11,10 @@ Window {
     // Simply include it in your project
     ResponsiveHelper {
         appWindow: window
-        active: true // Can be disabled in production environment
+        active: true // Helper can be disabled in production environment
+
+        //position: Qt.LeftEdge
+        //distanceFromEdge: 60
 
         // List the presets (resolution, dpi) shown as shortcuts for your application
         presets: ListModel {
