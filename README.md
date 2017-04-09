@@ -1,5 +1,5 @@
 # Qt Quick Responsive Helper
-A simple helper window for QtQuick based applications, to let developers test different resolutions and dpi settings eaisly. It was made to be integrated with minimal effort (only one QML file), and to be configurable for your specific usage.
+A simple helper window for QtQuick based applications, to let developers test different resolutions and dpi settings easily. It was made to be integrated with minimal effort (only one QML file), and to be configurable for your specific usage.
 
 Main features:
 - Set application width and height
