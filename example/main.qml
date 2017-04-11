@@ -1,5 +1,6 @@
 import QtQuick 2.2
 import QtQuick.Window 2.0
+import QtQuick.Controls 1.0
 
 Window {
     id: window
@@ -22,6 +23,28 @@ Window {
             ListElement { width: 720; height: 1024; dpi: 150}
             ListElement { width: 480; height: 800 }
         }
+
+        // Your custom action buttons
+        actions: ListModel {
+            ListElement { text: "MyAction1" }
+            ListElement { text: "MyAction2" }
+        }
+
+        // Handle clicks on your actions
+        onActionClicked: {
+            console.log(actionIndex)
+        }
+
+        // Your buttons or content
+        extraContent: [
+            Button {
+                text: "My Close Button"
+                width: helperBar.barWidth
+                onClicked: {
+                    window.close()
+                }
+            }
+        ]
 
         // Handle dpi or pixelDensity changes as you wish, instead of "Screen.pixelDensity"
         onDpiChanged: {

@@ -22,6 +22,12 @@ Item {
     // List of presets to display
     property ListModel presets: ListModel {}
 
+    // List of custom actions
+    property ListModel actions: ListModel {}
+
+    // List of custom actions
+    property alias extraContent: extraContentColumn.children
+
     //**********************
     // Public properties
     //
@@ -34,6 +40,14 @@ Item {
     readonly property int initialWidth: d.initialWidth
     readonly property int initialHeight: d.initialHeight
     readonly property int initialPixelDensity: d.initialPixelDensity
+
+    // Bar width
+    readonly property int barWidth: 125
+
+    //**********************
+    // Signals
+    //
+    signal actionClicked(int actionIndex)
 
     //**********************
     // Public functions
@@ -88,6 +102,10 @@ Item {
         sourceComponent: responsiveHelperComponent
     }
 
+    Column {
+        id: extraContentColumn
+        visible: false
+    }
 
     //**********************
     // GUI
@@ -104,9 +122,9 @@ Item {
                 else
                     return targetWindow.x + targetWindow.width + root.distanceFromEdge
             }
-            width: column.width
-            height: column.height
             y: targetWindow.y
+            width: barColumn.width
+            height: barColumn.height
             color: "#202020"
             flags: Qt.FramelessWindowHint
 
@@ -130,9 +148,14 @@ Item {
             }
 
             Column {
-                id: column
+                id: barColumn
                 spacing: 1
-                width: 125
+                width: root.barWidth
+
+                Component.onCompleted: {
+                    extraContentColumn.parent = barColumn
+                    extraContentColumn.visible = true
+                }
 
                 Button {
                     text: "Hide"
@@ -368,6 +391,32 @@ Item {
 
                             if (model.dpi)
                                 root.setDpi(model.dpi)
+                        }
+                    }
+                }
+
+                //**********************
+                // Actions & Buttons
+                //
+                Text {
+                    text: "Actions"
+                    width: parent.width
+                    height: d.textHeight
+                    color: "white"
+                    wrapMode: Text.Wrap
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignBottom
+                    visible: root.actions.count > 0 || root.buttons.length > 0
+                }
+
+                Repeater {
+                    model: root.actions
+
+                    Button {
+                        width: parent.width
+                        text: model.text
+                        onClicked: {
+                            root.actionClicked(index);
                         }
                     }
                 }
