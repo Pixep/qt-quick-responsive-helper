@@ -18,7 +18,7 @@ Window {
         //position: Qt.LeftEdge
         //distanceFromEdge: 60
 
-        // List the presets (resolution, dpi) shown as shortcuts for your application
+        // Lists the presets (resolution, dpi) shown as shortcuts for your application
         presets: ListModel {
             ListElement { width: 720; height: 1024; dpi: 150}
             ListElement { width: 480; height: 800 }
@@ -51,7 +51,7 @@ Window {
             console.log("Dpi set to " + dpi)
         }
         onPixelDensityChanged: {
-            console.log("Pixel density set to " + pixelDensity)
+            //console.log("Pixel density set to " + pixelDensity)
         }
     }
 
