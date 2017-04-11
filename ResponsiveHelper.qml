@@ -4,6 +4,8 @@ import QtQuick.Controls 1.0
 
 Item {
     id: root
+    width: 0
+    height: 0
 
     //**********************
     // Public input properties
@@ -13,11 +15,6 @@ Item {
 
     // Window element of the target application to test
     property Window targetWindow
-
-    // Align helper window on "Qt.LeftEdge" or "Qt.RightEdge" of the application
-    property int position: Qt.RightEdge
-    // Distance from the edge
-    property int distanceFromEdge: 20
 
     // List of presets to display
     property ListModel presets: ListModel {}
@@ -65,7 +62,7 @@ Item {
         var diff = value - targetWindow.width;
 
         // Move the application window to keep our window at the same spot when possible
-        if (root.position === Qt.LeftEdge) {
+        if (root.x < targetWindow.x / 2) {
             var availableSpace = Screen.desktopAvailableWidth - targetWindow.x - targetWindow.width;
             if (diff > 0 && availableSpace <= diff)
                 targetWindow.x -= diff - availableSpace;
@@ -166,17 +163,17 @@ Item {
         Window {
             id: helperWindow
             visible: true
-            x: {
-                if (root.position === Qt.LeftEdge)
-                    return targetWindow.x - helperWindow.width - root.distanceFromEdge
-                else
-                    return targetWindow.x + targetWindow.width + root.distanceFromEdge
-            }
-            y: targetWindow.y
-            width: barColumn.width
-            height: barColumn.height
+            x: targetWindow.x + root.x
+            y: targetWindow.y + root.y
+            width: root.width
+            height: root.height
             color: "#202020"
             flags: Qt.FramelessWindowHint
+
+            Component.onCompleted: {
+                if (root.width === 0)   root.width = Qt.binding(function() { return barColumn.width; });
+                if (root.height === 0)  root.height = Qt.binding(function() { return barColumn.height; });
+            }
 
             Connections {
                 target: targetWindow

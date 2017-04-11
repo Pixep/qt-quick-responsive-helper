@@ -15,8 +15,8 @@ Window {
         targetWindow: window
         active: true // Helper can be disabled in production environment
 
-        //position: Qt.LeftEdge
-        //distanceFromEdge: 60
+        anchors.left: parent.right
+        anchors.leftMargin: 30
 
         // Lists the presets (resolution, dpi) shown as shortcuts for your application
         initialPreset: 0
