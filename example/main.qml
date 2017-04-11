@@ -10,7 +10,8 @@ Window {
 
     // Simply include it in your project
     ResponsiveHelper {
-        appWindow: window
+        id: helperBar
+        targetWindow: window
         active: true // Helper can be disabled in production environment
 
         //position: Qt.LeftEdge

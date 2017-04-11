@@ -12,18 +12,15 @@ Item {
     property bool active: true
 
     // Window element of the target application to test
-    property Window appWindow
-
-    // List of presets to display
-    property ListModel presets: ListModel {
-        ListElement { width: 480; height: 800; dpi: 150 }
-        ListElement { width: 1024; height: 720 }
-    }
+    property Window targetWindow
 
     // Align helper window on "Qt.LeftEdge" or "Qt.RightEdge" of the application
     property int position: Qt.RightEdge
     // Distance from the edge
     property int distanceFromEdge: 20
+
+    // List of presets to display
+    property ListModel presets: ListModel {}
 
     //**********************
     // Public properties
@@ -47,34 +44,34 @@ Item {
 
     function setWindowWidth(value) {
         var newWidth = (1*value).toFixed(0);
-        var diff = value - appWindow.width;
+        var diff = value - targetWindow.width;
 
         // Move the application window to keep our window at the same spot when possible
         if (root.position === Qt.LeftEdge) {
-            var availableSpace = Screen.desktopAvailableWidth - appWindow.x - appWindow.width;
+            var availableSpace = Screen.desktopAvailableWidth - targetWindow.x - targetWindow.width;
             if (diff > 0 && availableSpace <= diff)
-                appWindow.x -= diff - availableSpace;
+                targetWindow.x -= diff - availableSpace;
         }
         else {
             if (diff < 0)
-                appWindow.x -= diff;
-            else if (appWindow.x > 0)
-                appWindow.x = Math.max(0, appWindow.x - diff)
+                targetWindow.x -= diff;
+            else if (targetWindow.x > 0)
+                targetWindow.x = Math.max(0, targetWindow.x - diff)
         }
 
-        appWindow.width = value;
+        targetWindow.width = value;
     }
 
     function setWindowHeight(value) {
-        appWindow.height = value;
+        targetWindow.height = value;
     }
 
     //**********************
     // Internal logic
     //
-    onAppWindowChanged: {
-        d.initialWidth = appWindow.width;
-        d.initialHeight = appWindow.height;
+    onTargetWindowChanged: {
+        d.initialWidth = targetWindow.width;
+        d.initialHeight = targetWindow.height;
     }
 
     QtObject {
@@ -87,7 +84,7 @@ Item {
     }
 
     Loader {
-        active: root.active && root.appWindow
+        active: root.active && root.targetWindow
         sourceComponent: responsiveHelperComponent
     }
 
@@ -103,18 +100,18 @@ Item {
             visible: true
             x: {
                 if (root.position === Qt.LeftEdge)
-                    return appWindow.x - helperWindow.width - root.distanceFromEdge
+                    return targetWindow.x - helperWindow.width - root.distanceFromEdge
                 else
-                    return appWindow.x + appWindow.width + root.distanceFromEdge
+                    return targetWindow.x + targetWindow.width + root.distanceFromEdge
             }
-            y: appWindow.y
             width: column.width
             height: column.height
+            y: targetWindow.y
             color: "#202020"
             flags: Qt.FramelessWindowHint
 
             Connections {
-                target: appWindow
+                target: targetWindow
                 onClosing: {
                     helperWindow.close();
                 }
@@ -125,7 +122,7 @@ Item {
 
             Connections {
                 target: root
-                onAppWindowChanged: {
+                onTargetWindowChanged: {
                     dpiEdit.bind();
                     widthEdit.bind();
                     heightEdit.bind();
@@ -162,10 +159,10 @@ Item {
 
                 Button {
                     width: parent.width
-                    text: (appWindow.height > appWindow.width) ? "Landscape" : "Portrait"
+                    text: (targetWindow.height > targetWindow.width) ? "Landscape" : "Portrait"
                     onClicked: {
-                        var height = appWindow.height
-                        root.setWindowHeight(root.appWindow.width)
+                        var height = targetWindow.height
+                        root.setWindowHeight(root.targetWindow.width)
                         root.setWindowWidth(height)
                     }
                 }
@@ -248,7 +245,7 @@ Item {
                         width: parent.width / 4
                         text: "-"
                         onClicked: {
-                            root.setWindowWidth(root.appWindow.width / 1.1)
+                            root.setWindowWidth(root.targetWindow.width / 1.1)
                         }
                     }
                     TextField {
@@ -271,7 +268,7 @@ Item {
                         }
 
                         function bind() {
-                            text = Qt.binding(function() { return root.appWindow.width } )
+                            text = Qt.binding(function() { return root.targetWindow.width } )
                         }
                     }
 
@@ -280,7 +277,7 @@ Item {
                         width: parent.width / 4
                         text: "+"
                         onClicked: {
-                            root.setWindowWidth(root.appWindow.width * 1.1)
+                            root.setWindowWidth(root.targetWindow.width * 1.1)
                         }
                     }
                 }
@@ -305,7 +302,7 @@ Item {
                         width: parent.width / 4
                         text: "-"
                         onClicked: {
-                            root.setWindowHeight(root.appWindow.height / 1.1)
+                            root.setWindowHeight(root.targetWindow.height / 1.1)
                         }
                     }
                     TextField {
@@ -328,7 +325,7 @@ Item {
                         }
 
                         function bind() {
-                            text = Qt.binding(function() { return root.appWindow.height } )
+                            text = Qt.binding(function() { return root.targetWindow.height } )
                         }
                     }
 
@@ -337,7 +334,7 @@ Item {
                         width: parent.width / 4
                         text: "+"
                         onClicked: {
-                            root.setWindowHeight(root.appWindow.height * 1.1)
+                            root.setWindowHeight(root.targetWindow.height * 1.1)
                         }
                     }
                 }
