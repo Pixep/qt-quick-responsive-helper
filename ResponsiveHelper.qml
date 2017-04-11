@@ -21,6 +21,10 @@ Item {
 
     // List of presets to display
     property ListModel presets: ListModel {}
+    // Index of the initial preset used
+    property int initialPreset: -1
+    // Current preset index
+    property int currentPreset: -1
 
     // List of custom actions
     property ListModel actions: ListModel {}
@@ -34,7 +38,7 @@ Item {
     // Custom pixel density value
     property real pixelDensity: Screen.pixelDensity
     // Custom DPI value
-    readonly property real dpi: (pixelDensity * 25.4).toFixed()
+    readonly property int dpi: pixelDensity * 25.4
 
     // Initial application window settings
     readonly property int initialWidth: d.initialWidth
@@ -84,8 +88,23 @@ Item {
     // Internal logic
     //
     onTargetWindowChanged: {
+        if (initialPreset >= 0) {
+            d.setPreset(initialPreset);
+        }
+
         d.initialWidth = targetWindow.width;
         d.initialHeight = targetWindow.height;
+        d.initialPixelDensity = root.pixelDensity;
+    }
+
+    onDpiChanged: {
+        var preset = presets.get(root.currentPreset);
+        if (preset && targetWindow.dpi !== preset.dpi)
+            root.currentPreset = -1
+    }
+
+    onCurrentPresetChanged: {
+        d.setPreset(currentPreset);
     }
 
     QtObject {
@@ -95,6 +114,37 @@ Item {
         property real initialPixelDensity: Screen.pixelDensity
 
         property int textHeight: 20
+
+        function setPreset(index) {
+            if (index < 0 || index > presets.count-1) {
+                return;
+            }
+
+            if (root.currentPreset !== index) {
+                root.currentPreset = index
+                return;
+            }
+
+            setWindowWidth(presets.get(index).width)
+            setWindowHeight(presets.get(index).height)
+
+            if (presets.get(index).dpi)
+                setDpi(presets.get(index).dpi)
+        }
+    }
+
+    Connections {
+        target: targetWindow
+        onWidthChanged: {
+            var preset = presets.get(root.currentPreset);
+            if (preset && targetWindow.width !== preset.width)
+                root.currentPreset = -1
+        }
+        onHeightChanged: {
+            var preset = presets.get(root.currentPreset);
+            if (preset && targetWindow.height !== preset.height)
+                root.currentPreset = -1
+        }
     }
 
     Loader {
@@ -190,6 +240,9 @@ Item {
                     }
                 }
 
+                //**********************
+                // DPI
+                //
                 Text {
                     text: "DPI"
                     color: "white"
@@ -247,6 +300,9 @@ Item {
                     }
                 }
 
+                //**********************
+                // Width
+                //
                 Text {
                     text: "Width"
                     color: "white"
@@ -305,6 +361,9 @@ Item {
                     }
                 }
 
+                //**********************
+                // Height
+                //
                 Text {
                     text: "Height"
                     color: "white"
@@ -362,6 +421,9 @@ Item {
                     }
                 }
 
+                //**********************
+                // Presets
+                //
                 Text {
                     text: "Presets"
                     width: parent.width
@@ -383,14 +445,13 @@ Item {
                             if (model.dpi)
                                 label += " (" + model.dpi + "dpi)";
 
+                            if (root.currentPreset === index)
+                                return "[" + label + "]";
+
                             return label;
                         }
                         onClicked: {
-                            root.setWindowWidth(model.width)
-                            root.setWindowHeight(model.height)
-
-                            if (model.dpi)
-                                root.setDpi(model.dpi)
+                            root.currentPreset = index;
                         }
                     }
                 }
