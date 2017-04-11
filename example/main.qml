@@ -19,6 +19,7 @@ Window {
         //distanceFromEdge: 60
 
         // Lists the presets (resolution, dpi) shown as shortcuts for your application
+        initialPreset: 0
         presets: ListModel {
             ListElement { width: 720; height: 1024; dpi: 150}
             ListElement { width: 480; height: 800 }
