@@ -14,6 +14,7 @@ Window {
         id: helperBar
         targetWindow: window
         active: true // Helper can be disabled in production environment
+        //showResponiveToolbar: false
 
         anchors.left: parent.right
         anchors.leftMargin: 30
