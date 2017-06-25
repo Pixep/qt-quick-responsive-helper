@@ -7,18 +7,20 @@ Window {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Hello World")
+    title: qsTr("Responsive helper example")
 
-    property real scaleFactor: width / 640
-    property real dpiScaleFactor: helperBar.dpi / 20
-
-    // Simply include it in your project
+    // This demonstrates some settings of the component
     ResponsiveHelper {
         id: helperBar
         targetWindow: window
-        active: true // Helper can be disabled in production environment
+
+        // Can be completely disabled (not loaded) in production environment
+        active: true
+
+        // Hide responsive-related buttons (dpi, resolution)
         //showResponiveToolbar: false
 
+        // Place it where you want
         anchors.left: parent.right
         anchors.leftMargin: 30
 
@@ -60,6 +62,11 @@ Window {
         }
     }
 
+    //------------------------------------------------------------
+    //  Simple usage example
+    //------------------------------------------------------------
+    property real scaleFactor: width / 640
+    property real dpiScaleFactor: helperBar.dpi / 20
 
     Text {
         id: textEdit
