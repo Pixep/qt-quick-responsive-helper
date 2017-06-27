@@ -4,7 +4,7 @@ import QtQuick.Controls 1.0
 
 Item {
     id: root
-    width: 0
+    width: defaultBarWidth
     height: 0
 
     //**********************
@@ -46,7 +46,7 @@ Item {
     readonly property int initialPixelDensity: d.initialPixelDensity
 
     // Bar width
-    readonly property int barWidth: 125
+    readonly property int defaultBarWidth: 125
 
     //**********************
     // Signals
@@ -154,6 +154,7 @@ Item {
 
     Column {
         id: extraContentColumn
+        width: parent.width
         visible: false
     }
 
@@ -174,8 +175,8 @@ Item {
             flags: Qt.FramelessWindowHint
 
             Component.onCompleted: {
-                if (root.width === 0)   root.width = Qt.binding(function() { return barColumn.width; });
-                if (root.height === 0)  root.height = Qt.binding(function() { return barColumn.height; });
+                root.width = Qt.binding(function() { return barColumn.width; });
+                root.height = Qt.binding(function() { return barColumn.height; });
             }
 
             Connections {
@@ -200,7 +201,7 @@ Item {
             Column {
                 id: barColumn
                 spacing: 1
-                width: root.barWidth
+                width: root.width
 
                 Component.onCompleted: {
                     extraContentColumn.parent = barColumn

@@ -12,6 +12,7 @@ Window {
     // This demonstrates some settings of the component
     ResponsiveHelper {
         id: helperBar
+        width: 125
         targetWindow: window
 
         // Can be completely disabled (not loaded) in production environment
@@ -46,7 +47,7 @@ Window {
         extraContent: [
             Button {
                 text: "My Close Button"
-                width: helperBar.barWidth
+                width: parent.width
                 onClicked: {
                     window.close()
                 }
