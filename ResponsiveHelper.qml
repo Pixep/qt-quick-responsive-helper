@@ -230,6 +230,9 @@ Item {
                     }
                 }
 
+                //***************************************************************************
+                // Responsive-related settings
+                //
                 Column {
                     width: parent.width
                     height: visible ? childrenRect.height : 0
@@ -473,7 +476,7 @@ Item {
                     wrapMode: Text.Wrap
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignBottom
-                    visible: root.actions.count > 0 || root.buttons.length > 0
+                    visible: root.actions.count > 0
                 }
 
                 Repeater {
