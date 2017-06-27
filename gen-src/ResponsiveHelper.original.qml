@@ -235,24 +235,8 @@ Item {
                     }
                 }
 
-                //---------------
-                // @Button
-                Rectangle {
-                    color: "darkgrey"
-                    height: 30
-                    signal clicked
-                    Text {
-                        text: parent.text
-                        anchors.centerIn: parent
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            parent.clicked()
-                        }
-                    }
-                    //---- Redefinitions ----
-                    property string text: "Hide"
+                @Button {
+                    text: "Hide"
                     width: parent.width
                     onClicked: {
                         helperWindow.close()
@@ -264,24 +248,8 @@ Item {
                     height: 10
                 }
 
-                //---------------
-                // @Button
-                Rectangle {
-                    color: "darkgrey"
-                    height: 30
-                    signal clicked
-                    Text {
-                        text: parent.text
-                        anchors.centerIn: parent
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            parent.clicked()
-                        }
-                    }
-                    //---- Redefinitions ----
-                    property string text: "Reset"
+                @Button {
+                    text: "Reset"
                     width: parent.width
                     onClicked: {
                         root.setWindowWidth(d.initialWidth)
