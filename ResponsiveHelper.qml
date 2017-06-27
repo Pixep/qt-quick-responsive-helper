@@ -167,12 +167,14 @@ Item {
         Window {
             id: helperWindow
             visible: true
-            x: targetWindow.x + root.x
-            y: targetWindow.y + root.y
+            x: targetWindow.x + root.x + windowOffset.x
+            y: targetWindow.y + root.y + windowOffset.y
             width: root.width
             height: root.height
             color: "#202020"
             flags: Qt.FramelessWindowHint
+
+            property point windowOffset: Qt.point(0, 0)
 
             Component.onCompleted: {
                 root.width = Qt.binding(function() { return barColumn.width; });
@@ -208,6 +210,30 @@ Item {
                     extraContentColumn.visible = true
                 }
 
+                MouseArea {
+                    id: mouseArea
+                    width: parent.width
+                    height: 20
+
+                    property point originMousePosition
+
+                    onPressed: {
+                        originMousePosition.x = mouseX
+                        originMousePosition.y = mouseY
+                    }
+                    onPositionChanged: {
+                        helperWindow.windowOffset.x += mouseX - originMousePosition.x
+                        helperWindow.windowOffset.y += mouseY - originMousePosition.y
+                    }
+
+                    Grid {
+                        anchors.centerIn: parent
+                        columns: 5
+                        rows: 2
+                        spacing: 4
+                        Repeater { model: 10; Rectangle { width: 4; height: width; radius: width/2 } }
+                    }
+                }
                 Button {
                     text: "Hide"
                     width: parent.width
