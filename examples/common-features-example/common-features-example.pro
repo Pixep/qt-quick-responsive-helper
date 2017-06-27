@@ -7,7 +7,7 @@ SOURCES += main.cpp
 RESOURCES += qml.qrc
 
 OTHER_FILES += \
-    ../ResponsiveHelper.qml \
+    ../../ResponsiveHelper.qml \
     main.qml
 
 # Default rules for deployment.
