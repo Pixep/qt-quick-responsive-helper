@@ -4,6 +4,8 @@ import QtQuick.Controls 1.0
 
 Item {
     id: root
+    width: defaultBarWidth
+    height: 0
 
     //**********************
     // Public input properties
@@ -12,18 +14,23 @@ Item {
     property bool active: true
 
     // Window element of the target application to test
-    property Window appWindow
+    property Window targetWindow
+
+    // Shows or hide responsive toolbar
+    property bool showResponiveToolbar: true
 
     // List of presets to display
-    property ListModel presets: ListModel {
-        ListElement { width: 480; height: 800; dpi: 150 }
-        ListElement { width: 1024; height: 720 }
-    }
+    property ListModel presets: ListModel {}
+    // Index of the initial preset used
+    property int initialPreset: -1
+    // Current preset index
+    property int currentPreset: -1
 
-    // Align helper window on "Qt.LeftEdge" or "Qt.RightEdge" of the application
-    property int position: Qt.RightEdge
-    // Distance from the edge
-    property int distanceFromEdge: 20
+    // List of custom actions
+    property ListModel actions: ListModel {}
+
+    // List of custom actions
+    property alias extraContent: extraContentColumn.children
 
     //**********************
     // Public properties
@@ -31,12 +38,20 @@ Item {
     // Custom pixel density value
     property real pixelDensity: Screen.pixelDensity
     // Custom DPI value
-    readonly property real dpi: (pixelDensity * 25.4).toFixed()
+    readonly property int dpi: pixelDensity * 25.4
 
     // Initial application window settings
     readonly property int initialWidth: d.initialWidth
     readonly property int initialHeight: d.initialHeight
     readonly property int initialPixelDensity: d.initialPixelDensity
+
+    // Bar width
+    readonly property int defaultBarWidth: 125
+
+    //**********************
+    // Signals
+    //
+    signal actionClicked(int actionIndex)
 
     //**********************
     // Public functions
@@ -47,34 +62,49 @@ Item {
 
     function setWindowWidth(value) {
         var newWidth = (1*value).toFixed(0);
-        var diff = value - appWindow.width;
+        var diff = value - targetWindow.width;
 
         // Move the application window to keep our window at the same spot when possible
-        if (root.position === Qt.LeftEdge) {
-            var availableSpace = Screen.desktopAvailableWidth - appWindow.x - appWindow.width;
+        if (root.x < targetWindow.x / 2) {
+            var availableSpace = Screen.desktopAvailableWidth - targetWindow.x - targetWindow.width;
             if (diff > 0 && availableSpace <= diff)
-                appWindow.x -= diff - availableSpace;
+                targetWindow.x -= diff - availableSpace;
         }
         else {
             if (diff < 0)
-                appWindow.x -= diff;
-            else if (appWindow.x > 0)
-                appWindow.x = Math.max(0, appWindow.x - diff)
+                targetWindow.x -= diff;
+            else if (targetWindow.x > 0)
+                targetWindow.x = Math.max(0, targetWindow.x - diff)
         }
 
-        appWindow.width = value;
+        targetWindow.width = value;
     }
 
     function setWindowHeight(value) {
-        appWindow.height = value;
+        targetWindow.height = value;
     }
 
     //**********************
     // Internal logic
     //
-    onAppWindowChanged: {
-        d.initialWidth = appWindow.width;
-        d.initialHeight = appWindow.height;
+    onTargetWindowChanged: {
+        if (initialPreset >= 0) {
+            d.setPreset(initialPreset);
+        }
+
+        d.initialWidth = targetWindow.width;
+        d.initialHeight = targetWindow.height;
+        d.initialPixelDensity = root.pixelDensity;
+    }
+
+    onDpiChanged: {
+        var preset = presets.get(root.currentPreset);
+        if (preset && targetWindow.dpi !== preset.dpi)
+            root.currentPreset = -1
+    }
+
+    onCurrentPresetChanged: {
+        d.setPreset(currentPreset);
     }
 
     QtObject {
@@ -84,13 +114,49 @@ Item {
         property real initialPixelDensity: Screen.pixelDensity
 
         property int textHeight: 20
+
+        function setPreset(index) {
+            if (index < 0 || index > presets.count-1) {
+                return;
+            }
+
+            if (root.currentPreset !== index) {
+                root.currentPreset = index
+                return;
+            }
+
+            setWindowWidth(presets.get(index).width)
+            setWindowHeight(presets.get(index).height)
+
+            if (presets.get(index).dpi)
+                setDpi(presets.get(index).dpi)
+        }
+    }
+
+    Connections {
+        target: targetWindow
+        onWidthChanged: {
+            var preset = presets.get(root.currentPreset);
+            if (preset && targetWindow.width !== preset.width)
+                root.currentPreset = -1
+        }
+        onHeightChanged: {
+            var preset = presets.get(root.currentPreset);
+            if (preset && targetWindow.height !== preset.height)
+                root.currentPreset = -1
+        }
     }
 
     Loader {
-        active: root.active && root.appWindow
+        active: root.active && root.targetWindow
         sourceComponent: responsiveHelperComponent
     }
 
+    Column {
+        id: extraContentColumn
+        width: parent.width
+        visible: false
+    }
 
     //**********************
     // GUI
@@ -101,20 +167,22 @@ Item {
         Window {
             id: helperWindow
             visible: true
-            x: {
-                if (root.position === Qt.LeftEdge)
-                    return appWindow.x - helperWindow.width - root.distanceFromEdge
-                else
-                    return appWindow.x + appWindow.width + root.distanceFromEdge
-            }
-            y: appWindow.y
-            width: column.width
-            height: column.height
+            x: targetWindow.x + root.x + windowOffset.x
+            y: targetWindow.y + root.y + windowOffset.y
+            width: root.width
+            height: root.height
             color: "#202020"
             flags: Qt.FramelessWindowHint
 
+            property point windowOffset: Qt.point(0, 0)
+
+            Component.onCompleted: {
+                root.width = Qt.binding(function() { return barColumn.width; });
+                root.height = Qt.binding(function() { return barColumn.height; });
+            }
+
             Connections {
-                target: appWindow
+                target: targetWindow
                 onClosing: {
                     helperWindow.close();
                 }
@@ -125,7 +193,7 @@ Item {
 
             Connections {
                 target: root
-                onAppWindowChanged: {
+                onTargetWindowChanged: {
                     dpiEdit.bind();
                     widthEdit.bind();
                     heightEdit.bind();
@@ -133,10 +201,39 @@ Item {
             }
 
             Column {
-                id: column
+                id: barColumn
                 spacing: 1
-                width: 125
+                width: root.width
 
+                Component.onCompleted: {
+                    extraContentColumn.parent = barColumn
+                    extraContentColumn.visible = true
+                }
+
+                MouseArea {
+                    id: mouseArea
+                    width: parent.width
+                    height: 20
+
+                    property point originMousePosition
+
+                    onPressed: {
+                        originMousePosition.x = mouseX
+                        originMousePosition.y = mouseY
+                    }
+                    onPositionChanged: {
+                        helperWindow.windowOffset.x += mouseX - originMousePosition.x
+                        helperWindow.windowOffset.y += mouseY - originMousePosition.y
+                    }
+
+                    Grid {
+                        anchors.centerIn: parent
+                        columns: 5
+                        rows: 2
+                        spacing: 4
+                        Repeater { model: 10; Rectangle { width: 4; height: width; radius: width/2 } }
+                    }
+                }
                 Button {
                     text: "Hide"
                     width: parent.width
@@ -160,217 +257,263 @@ Item {
                     }
                 }
 
-                Button {
+                //***************************************************************************
+                // Responsive-related settings
+                //
+                Column {
                     width: parent.width
-                    text: (appWindow.height > appWindow.width) ? "Landscape" : "Portrait"
-                    onClicked: {
-                        var height = appWindow.height
-                        root.setWindowHeight(root.appWindow.width)
-                        root.setWindowWidth(height)
-                    }
-                }
-
-                Text {
-                    text: "DPI"
-                    color: "white"
-                    height: d.textHeight
-                    width: parent.width
-                    wrapMode: Text.Wrap
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignBottom
-                }
-
-                Row {
-                    width: parent.width
-                    height: childrenRect.height
-                    spacing: 0
-
-                    Button {
-                        height: dpiEdit.height
-                        width: parent.width / 4
-                        text: "-"
-                        onClicked: {
-                            root.pixelDensity /= 1.3
-                        }
-                    }
-                    TextField {
-                        id: dpiEdit
-                        width: parent.width / 2
-                        text: "N/A"
-                        validator: IntValidator {bottom: 1; top: 999;}
-                        horizontalAlignment: Text.AlignHCenter
-
-                        Component.onCompleted: {
-                            bind();
-                        }
-                        onEditingFinished: {
-                            root.setDpi(text)
-                            bind();
-                        }
-                        Keys.onEscapePressed: {
-                            bind();
-                            focus = false
-                        }
-
-                        function bind() {
-                            text = Qt.binding(function() { return root.dpi.toFixed(0) } )
-                        }
-                    }
-
-                    Button {
-                        height: dpiEdit.height
-                        width: parent.width / 4
-                        text: "+"
-                        onClicked: {
-                            root.pixelDensity *= 1.3
-                        }
-                    }
-                }
-
-                Text {
-                    text: "Width"
-                    color: "white"
-                    height: d.textHeight
-                    width: parent.width
-                    wrapMode: Text.Wrap
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignBottom
-                }
-
-                Row {
-                    id: row
-                    width: parent.width
-                    height: childrenRect.height
-                    spacing: 0
-
-                    Button {
-                        height: widthEdit.height
-                        width: parent.width / 4
-                        text: "-"
-                        onClicked: {
-                            root.setWindowWidth(root.appWindow.width / 1.1)
-                        }
-                    }
-                    TextField {
-                        id: widthEdit
-                        width: parent.width / 2
-                        text: "N/A"
-                        validator: IntValidator {bottom: 10; top: 5000;}
-                        horizontalAlignment: Text.AlignHCenter
-
-                        Component.onCompleted: {
-                            bind();
-                        }
-                        onEditingFinished: {
-                            root.setWindowWidth(text)
-                            bind();
-                        }
-                        Keys.onEscapePressed: {
-                            bind();
-                            focus = false
-                        }
-
-                        function bind() {
-                            text = Qt.binding(function() { return root.appWindow.width } )
-                        }
-                    }
-
-                    Button {
-                        height: widthEdit.height
-                        width: parent.width / 4
-                        text: "+"
-                        onClicked: {
-                            root.setWindowWidth(root.appWindow.width * 1.1)
-                        }
-                    }
-                }
-
-                Text {
-                    text: "Height"
-                    color: "white"
-                    width: parent.width
-                    height: d.textHeight
-                    wrapMode: Text.Wrap
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignBottom
-                }
-
-                Row {
-                    width: parent.width
-                    height: childrenRect.height
-                    spacing: 0
-
-                    Button {
-                        height: heightEdit.height
-                        width: parent.width / 4
-                        text: "-"
-                        onClicked: {
-                            root.setWindowHeight(root.appWindow.height / 1.1)
-                        }
-                    }
-                    TextField {
-                        id: heightEdit
-                        width: parent.width / 2
-                        text: "N/A"
-                        validator: IntValidator {bottom: 10; top: 5000;}
-                        horizontalAlignment: Text.AlignHCenter
-
-                        Component.onCompleted: {
-                            bind();
-                        }
-                        onEditingFinished: {
-                            root.setWindowHeight(text)
-                            bind();
-                        }
-                        Keys.onEscapePressed: {
-                            bind();
-                            focus = false
-                        }
-
-                        function bind() {
-                            text = Qt.binding(function() { return root.appWindow.height } )
-                        }
-                    }
-
-                    Button {
-                        height: heightEdit.height
-                        width: parent.width / 4
-                        text: "+"
-                        onClicked: {
-                            root.setWindowHeight(root.appWindow.height * 1.1)
-                        }
-                    }
-                }
-
-                Text {
-                    text: "Presets"
-                    width: parent.width
-                    height: d.textHeight
-                    color: "white"
-                    wrapMode: Text.Wrap
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignBottom
-                    visible: root.presets.count > 0
-                }
-
-                Repeater {
-                    model: root.presets
+                    height: visible ? childrenRect.height : 0
+                    visible: root.showResponiveToolbar
 
                     Button {
                         width: parent.width
-                        text: {
-                            var label = model.width + " x " + model.height;
-                            if (model.dpi)
-                                label += " (" + model.dpi + "dpi)";
-
-                            return label;
-                        }
+                        text: (targetWindow.height > targetWindow.width) ? "Landscape" : "Portrait"
                         onClicked: {
-                            root.setWindowWidth(model.width)
-                            root.setWindowHeight(model.height)
+                            var height = targetWindow.height
+                            root.setWindowHeight(root.targetWindow.width)
+                            root.setWindowWidth(height)
+                        }
+                    }
 
-                            if (model.dpi)
-                                root.setDpi(model.dpi)
+                    //**********************
+                    // DPI
+                    //
+                    Text {
+                        text: "DPI"
+                        color: "white"
+                        height: d.textHeight
+                        width: parent.width
+                        wrapMode: Text.Wrap
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignBottom
+                    }
+
+                    Row {
+                        width: parent.width
+                        height: childrenRect.height
+                        spacing: 0
+
+                        Button {
+                            height: dpiEdit.height
+                            width: parent.width / 4
+                            text: "-"
+                            onClicked: {
+                                root.pixelDensity /= 1.3
+                            }
+                        }
+                        TextField {
+                            id: dpiEdit
+                            width: parent.width / 2
+                            text: "N/A"
+                            validator: IntValidator {bottom: 1; top: 999;}
+                            horizontalAlignment: Text.AlignHCenter
+
+                            Component.onCompleted: {
+                                bind();
+                            }
+                            onEditingFinished: {
+                                root.setDpi(text)
+                                bind();
+                            }
+                            Keys.onEscapePressed: {
+                                bind();
+                                focus = false
+                            }
+
+                            function bind() {
+                                text = Qt.binding(function() { return root.dpi.toFixed(0) } )
+                            }
+                        }
+
+                        Button {
+                            height: dpiEdit.height
+                            width: parent.width / 4
+                            text: "+"
+                            onClicked: {
+                                root.pixelDensity *= 1.3
+                            }
+                        }
+                    }
+
+                    //**********************
+                    // Width
+                    //
+                    Text {
+                        text: "Width"
+                        color: "white"
+                        height: d.textHeight
+                        width: parent.width
+                        wrapMode: Text.Wrap
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignBottom
+                    }
+
+                    Row {
+                        id: row
+                        width: parent.width
+                        height: childrenRect.height
+                        spacing: 0
+
+                        Button {
+                            height: widthEdit.height
+                            width: parent.width / 4
+                            text: "-"
+                            onClicked: {
+                                root.setWindowWidth(root.targetWindow.width / 1.1)
+                            }
+                        }
+                        TextField {
+                            id: widthEdit
+                            width: parent.width / 2
+                            text: "N/A"
+                            validator: IntValidator {bottom: 10; top: 5000;}
+                            horizontalAlignment: Text.AlignHCenter
+
+                            Component.onCompleted: {
+                                bind();
+                            }
+                            onEditingFinished: {
+                                root.setWindowWidth(text)
+                                bind();
+                            }
+                            Keys.onEscapePressed: {
+                                bind();
+                                focus = false
+                            }
+
+                            function bind() {
+                                text = Qt.binding(function() { return root.targetWindow.width } )
+                            }
+                        }
+
+                        Button {
+                            height: widthEdit.height
+                            width: parent.width / 4
+                            text: "+"
+                            onClicked: {
+                                root.setWindowWidth(root.targetWindow.width * 1.1)
+                            }
+                        }
+                    }
+
+                    //**********************
+                    // Height
+                    //
+                    Text {
+                        text: "Height"
+                        color: "white"
+                        width: parent.width
+                        height: d.textHeight
+                        wrapMode: Text.Wrap
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignBottom
+                    }
+
+                    Row {
+                        width: parent.width
+                        height: childrenRect.height
+                        spacing: 0
+
+                        Button {
+                            height: heightEdit.height
+                            width: parent.width / 4
+                            text: "-"
+                            onClicked: {
+                                root.setWindowHeight(root.targetWindow.height / 1.1)
+                            }
+                        }
+                        TextField {
+                            id: heightEdit
+                            width: parent.width / 2
+                            text: "N/A"
+                            validator: IntValidator {bottom: 10; top: 5000;}
+                            horizontalAlignment: Text.AlignHCenter
+
+                            Component.onCompleted: {
+                                bind();
+                            }
+                            onEditingFinished: {
+                                root.setWindowHeight(text)
+                                bind();
+                            }
+                            Keys.onEscapePressed: {
+                                bind();
+                                focus = false
+                            }
+
+                            function bind() {
+                                text = Qt.binding(function() { return root.targetWindow.height } )
+                            }
+                        }
+
+                        Button {
+                            height: heightEdit.height
+                            width: parent.width / 4
+                            text: "+"
+                            onClicked: {
+                                root.setWindowHeight(root.targetWindow.height * 1.1)
+                            }
+                        }
+                    }
+
+                    //**********************
+                    // Presets
+                    //
+                    Text {
+                        text: "Presets"
+                        width: parent.width
+                        height: d.textHeight
+                        color: "white"
+                        wrapMode: Text.Wrap
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignBottom
+                        visible: root.presets.count > 0
+                    }
+
+                    Repeater {
+                        model: root.presets
+
+                        Button {
+                            width: parent.width
+                            text: {
+                                var label = model.width + " x " + model.height;
+                                if (model.dpi)
+                                    label += " (" + model.dpi + "dpi)";
+
+                                if (root.currentPreset === index)
+                                    return "[" + label + "]";
+
+                                return label;
+                            }
+                            onClicked: {
+                                root.currentPreset = index;
+                            }
+                        }
+                    }
+                }
+
+                //**********************
+                // Actions & Buttons
+                //
+                Text {
+                    text: "Actions"
+                    width: parent.width
+                    height: d.textHeight
+                    color: "white"
+                    wrapMode: Text.Wrap
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignBottom
+                    visible: root.actions.count > 0
+                }
+
+                Repeater {
+                    model: root.actions
+
+                    Button {
+                        width: parent.width
+                        text: model.text
+                        onClicked: {
+                            root.actionClicked(index);
                         }
                     }
                 }
