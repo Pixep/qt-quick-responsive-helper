@@ -238,17 +238,24 @@ Item {
                 //---------------
                 // @Button
                 Rectangle {
-                    color: "darkgrey"
+                    color: "#555"
                     height: 30
                     signal clicked
                     Text {
                         text: parent.text
                         anchors.centerIn: parent
+                        color: "#EEE"
                     }
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
                             parent.clicked()
+                        }
+                        onPressed: {
+                            parent.color = "#999"
+                        }
+                        onReleased: {
+                            parent.color = "#555"
                         }
                     }
                     //---- Redefinitions ----
@@ -267,17 +274,24 @@ Item {
                 //---------------
                 // @Button
                 Rectangle {
-                    color: "darkgrey"
+                    color: "#555"
                     height: 30
                     signal clicked
                     Text {
                         text: parent.text
                         anchors.centerIn: parent
+                        color: "#EEE"
                     }
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
                             parent.clicked()
+                        }
+                        onPressed: {
+                            parent.color = "#999"
+                        }
+                        onReleased: {
+                            parent.color = "#555"
                         }
                     }
                     //---- Redefinitions ----
@@ -298,9 +312,32 @@ Item {
                     height: visible ? childrenRect.height : 0
                     visible: root.showResponiveToolbar
 
-                    Button {
+                    //---------------
+                    // @Button
+                    Rectangle {
+                        color: "#555"
+                        height: 30
+                        signal clicked
+                        Text {
+                            text: parent.text
+                            anchors.centerIn: parent
+                            color: "#EEE"
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                parent.clicked()
+                            }
+                            onPressed: {
+                                parent.color = "#999"
+                            }
+                            onReleased: {
+                                parent.color = "#555"
+                            }
+                        }
+                        //---- Redefinitions ----
                         width: parent.width
-                        text: (targetWindow.height > targetWindow.width) ? "Landscape" : "Portrait"
+                        property string text: (targetWindow.height > targetWindow.width) ? "Landscape" : "Portrait"
                         onClicked: {
                             var height = targetWindow.height
                             root.setWindowHeight(root.targetWindow.width)
@@ -326,10 +363,32 @@ Item {
                         height: childrenRect.height
                         spacing: 0
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: "#555"
+                            signal clicked
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: "#EEE"
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = "#999"
+                                }
+                                onReleased: {
+                                    parent.color = "#555"
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: dpiEdit.height
                             width: parent.width / 4
-                            text: "-"
+                            property string text: "-"
                             onClicked: {
                                 root.pixelDensity /= 1.3
                             }
@@ -358,10 +417,32 @@ Item {
                             }
                         }
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: "#555"
+                            signal clicked
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: "#EEE"
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = "#999"
+                                }
+                                onReleased: {
+                                    parent.color = "#555"
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: dpiEdit.height
                             width: parent.width / 4
-                            text: "+"
+                            property string text: "+"
                             onClicked: {
                                 root.pixelDensity *= 1.3
                             }
@@ -387,10 +468,32 @@ Item {
                         height: childrenRect.height
                         spacing: 0
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: "#555"
+                            signal clicked
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: "#EEE"
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = "#999"
+                                }
+                                onReleased: {
+                                    parent.color = "#555"
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: widthEdit.height
                             width: parent.width / 4
-                            text: "-"
+                            property string text: "-"
                             onClicked: {
                                 root.setWindowWidth(root.targetWindow.width / 1.1)
                             }
@@ -419,10 +522,32 @@ Item {
                             }
                         }
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: "#555"
+                            signal clicked
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: "#EEE"
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = "#999"
+                                }
+                                onReleased: {
+                                    parent.color = "#555"
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: widthEdit.height
                             width: parent.width / 4
-                            text: "+"
+                            property string text: "+"
                             onClicked: {
                                 root.setWindowWidth(root.targetWindow.width * 1.1)
                             }
@@ -447,10 +572,32 @@ Item {
                         height: childrenRect.height
                         spacing: 0
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: "#555"
+                            signal clicked
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: "#EEE"
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = "#999"
+                                }
+                                onReleased: {
+                                    parent.color = "#555"
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: heightEdit.height
                             width: parent.width / 4
-                            text: "-"
+                            property string text: "-"
                             onClicked: {
                                 root.setWindowHeight(root.targetWindow.height / 1.1)
                             }
@@ -479,10 +626,32 @@ Item {
                             }
                         }
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: "#555"
+                            signal clicked
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: "#EEE"
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = "#999"
+                                }
+                                onReleased: {
+                                    parent.color = "#555"
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: heightEdit.height
                             width: parent.width / 4
-                            text: "+"
+                            property string text: "+"
                             onClicked: {
                                 root.setWindowHeight(root.targetWindow.height * 1.1)
                             }
@@ -506,9 +675,32 @@ Item {
                     Repeater {
                         model: root.presets
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: "#555"
+                            height: 30
+                            signal clicked
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: "#EEE"
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = "#999"
+                                }
+                                onReleased: {
+                                    parent.color = "#555"
+                                }
+                            }
+                            //---- Redefinitions ----
                             width: parent.width
-                            text: {
+                            property string text: {
                                 var label = model.width + " x " + model.height;
                                 if (model.dpi)
                                     label += " (" + model.dpi + "dpi)";
@@ -542,9 +734,32 @@ Item {
                 Repeater {
                     model: root.actions
 
-                    Button {
+                    //---------------
+                    // @Button
+                    Rectangle {
+                        color: "#555"
+                        height: 30
+                        signal clicked
+                        Text {
+                            text: parent.text
+                            anchors.centerIn: parent
+                            color: "#EEE"
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                parent.clicked()
+                            }
+                            onPressed: {
+                                parent.color = "#999"
+                            }
+                            onReleased: {
+                                parent.color = "#555"
+                            }
+                        }
+                        //---- Redefinitions ----
                         width: parent.width
-                        text: model.text
+                        property string text: model.text
                         onClicked: {
                             root.actionClicked(index);
                         }
