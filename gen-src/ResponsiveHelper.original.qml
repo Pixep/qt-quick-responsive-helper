@@ -266,7 +266,7 @@ Item {
                     height: visible ? childrenRect.height : 0
                     visible: root.showResponiveToolbar
 
-                    Button {
+                    @Button {
                         width: parent.width
                         text: (targetWindow.height > targetWindow.width) ? "Landscape" : "Portrait"
                         onClicked: {
@@ -294,7 +294,7 @@ Item {
                         height: childrenRect.height
                         spacing: 0
 
-                        Button {
+                        @Button {
                             height: dpiEdit.height
                             width: parent.width / 4
                             text: "-"
@@ -326,7 +326,7 @@ Item {
                             }
                         }
 
-                        Button {
+                        @Button {
                             height: dpiEdit.height
                             width: parent.width / 4
                             text: "+"
@@ -355,7 +355,7 @@ Item {
                         height: childrenRect.height
                         spacing: 0
 
-                        Button {
+                        @Button {
                             height: widthEdit.height
                             width: parent.width / 4
                             text: "-"
@@ -387,7 +387,7 @@ Item {
                             }
                         }
 
-                        Button {
+                        @Button {
                             height: widthEdit.height
                             width: parent.width / 4
                             text: "+"
@@ -415,7 +415,7 @@ Item {
                         height: childrenRect.height
                         spacing: 0
 
-                        Button {
+                        @Button {
                             height: heightEdit.height
                             width: parent.width / 4
                             text: "-"
@@ -447,7 +447,7 @@ Item {
                             }
                         }
 
-                        Button {
+                        @Button {
                             height: heightEdit.height
                             width: parent.width / 4
                             text: "+"
@@ -474,7 +474,7 @@ Item {
                     Repeater {
                         model: root.presets
 
-                        Button {
+                        @Button {
                             width: parent.width
                             text: {
                                 var label = model.width + " x " + model.height;
@@ -510,7 +510,7 @@ Item {
                 Repeater {
                     model: root.actions
 
-                    Button {
+                    @Button {
                         width: parent.width
                         text: model.text
                         onClicked: {
