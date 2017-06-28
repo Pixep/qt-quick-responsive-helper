@@ -237,13 +237,21 @@ Item {
                 //---------------
                 // @Button
                 Rectangle {
-                    color: "#555"
+                    color: baseColor
                     height: 30
+                    property bool selected: false
+                    property color baseColor: "#555"
                     signal clicked
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "#FFF"
+                        opacity: 0.3
+                        visible: parent.selected
+                    }
                     Text {
                         text: parent.text
                         anchors.centerIn: parent
-                        color: "#EEE"
+                        color: parent.selected ? "#FFF" : "#EEE"
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -251,10 +259,10 @@ Item {
                             parent.clicked()
                         }
                         onPressed: {
-                            parent.color = "#999"
+                            parent.color = Qt.lighter(parent.baseColor)
                         }
                         onReleased: {
-                            parent.color = "#555"
+                            parent.color = parent.baseColor
                         }
                     }
                     //---- Redefinitions ----
@@ -273,13 +281,21 @@ Item {
                 //---------------
                 // @Button
                 Rectangle {
-                    color: "#555"
+                    color: baseColor
                     height: 30
+                    property bool selected: false
+                    property color baseColor: "#555"
                     signal clicked
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "#FFF"
+                        opacity: 0.3
+                        visible: parent.selected
+                    }
                     Text {
                         text: parent.text
                         anchors.centerIn: parent
-                        color: "#EEE"
+                        color: parent.selected ? "#FFF" : "#EEE"
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -287,10 +303,10 @@ Item {
                             parent.clicked()
                         }
                         onPressed: {
-                            parent.color = "#999"
+                            parent.color = Qt.lighter(parent.baseColor)
                         }
                         onReleased: {
-                            parent.color = "#555"
+                            parent.color = parent.baseColor
                         }
                     }
                     //---- Redefinitions ----
@@ -314,13 +330,21 @@ Item {
                     //---------------
                     // @Button
                     Rectangle {
-                        color: "#555"
+                        color: baseColor
                         height: 30
+                        property bool selected: false
+                        property color baseColor: "#555"
                         signal clicked
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "#FFF"
+                            opacity: 0.3
+                            visible: parent.selected
+                        }
                         Text {
                             text: parent.text
                             anchors.centerIn: parent
-                            color: "#EEE"
+                            color: parent.selected ? "#FFF" : "#EEE"
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -328,10 +352,10 @@ Item {
                                 parent.clicked()
                             }
                             onPressed: {
-                                parent.color = "#999"
+                                parent.color = Qt.lighter(parent.baseColor)
                             }
                             onReleased: {
-                                parent.color = "#555"
+                                parent.color = parent.baseColor
                             }
                         }
                         //---- Redefinitions ----
@@ -365,12 +389,20 @@ Item {
                         //---------------
                         // @Button
                         Rectangle {
-                            color: "#555"
+                            color: baseColor
+                            property bool selected: false
+                            property color baseColor: "#555"
                             signal clicked
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
-                                color: "#EEE"
+                                color: parent.selected ? "#FFF" : "#EEE"
                             }
                             MouseArea {
                                 anchors.fill: parent
@@ -378,10 +410,10 @@ Item {
                                     parent.clicked()
                                 }
                                 onPressed: {
-                                    parent.color = "#999"
+                                    parent.color = Qt.lighter(parent.baseColor)
                                 }
                                 onReleased: {
-                                    parent.color = "#555"
+                                    parent.color = parent.baseColor
                                 }
                             }
                             //---- Redefinitions ----
@@ -397,9 +429,9 @@ Item {
                         Rectangle {
                             color: "#555"
                             height: 30
+                            property string text
                             signal discarded()
                             signal editingFinished(string value)
-                            property string text
                             TextInput {
                                 anchors.fill: parent
                                 horizontalAlignment: TextEdit.AlignHCenter
@@ -421,6 +453,7 @@ Item {
                                     bind()
                                 }
                                 onEditingFinished: {
+                                    focus = false
                                     parent.editingFinished(text)
                                     bind()
                                 }
@@ -442,12 +475,20 @@ Item {
                         //---------------
                         // @Button
                         Rectangle {
-                            color: "#555"
+                            color: baseColor
+                            property bool selected: false
+                            property color baseColor: "#555"
                             signal clicked
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
-                                color: "#EEE"
+                                color: parent.selected ? "#FFF" : "#EEE"
                             }
                             MouseArea {
                                 anchors.fill: parent
@@ -455,10 +496,10 @@ Item {
                                     parent.clicked()
                                 }
                                 onPressed: {
-                                    parent.color = "#999"
+                                    parent.color = Qt.lighter(parent.baseColor)
                                 }
                                 onReleased: {
-                                    parent.color = "#555"
+                                    parent.color = parent.baseColor
                                 }
                             }
                             //---- Redefinitions ----
@@ -493,12 +534,20 @@ Item {
                         //---------------
                         // @Button
                         Rectangle {
-                            color: "#555"
+                            color: baseColor
+                            property bool selected: false
+                            property color baseColor: "#555"
                             signal clicked
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
-                                color: "#EEE"
+                                color: parent.selected ? "#FFF" : "#EEE"
                             }
                             MouseArea {
                                 anchors.fill: parent
@@ -506,10 +555,10 @@ Item {
                                     parent.clicked()
                                 }
                                 onPressed: {
-                                    parent.color = "#999"
+                                    parent.color = Qt.lighter(parent.baseColor)
                                 }
                                 onReleased: {
-                                    parent.color = "#555"
+                                    parent.color = parent.baseColor
                                 }
                             }
                             //---- Redefinitions ----
@@ -525,9 +574,9 @@ Item {
                         Rectangle {
                             color: "#555"
                             height: 30
+                            property string text
                             signal discarded()
                             signal editingFinished(string value)
-                            property string text
                             TextInput {
                                 anchors.fill: parent
                                 horizontalAlignment: TextEdit.AlignHCenter
@@ -549,6 +598,7 @@ Item {
                                     bind()
                                 }
                                 onEditingFinished: {
+                                    focus = false
                                     parent.editingFinished(text)
                                     bind()
                                 }
@@ -571,12 +621,20 @@ Item {
                         //---------------
                         // @Button
                         Rectangle {
-                            color: "#555"
+                            color: baseColor
+                            property bool selected: false
+                            property color baseColor: "#555"
                             signal clicked
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
-                                color: "#EEE"
+                                color: parent.selected ? "#FFF" : "#EEE"
                             }
                             MouseArea {
                                 anchors.fill: parent
@@ -584,10 +642,10 @@ Item {
                                     parent.clicked()
                                 }
                                 onPressed: {
-                                    parent.color = "#999"
+                                    parent.color = Qt.lighter(parent.baseColor)
                                 }
                                 onReleased: {
-                                    parent.color = "#555"
+                                    parent.color = parent.baseColor
                                 }
                             }
                             //---- Redefinitions ----
@@ -621,12 +679,20 @@ Item {
                         //---------------
                         // @Button
                         Rectangle {
-                            color: "#555"
+                            color: baseColor
+                            property bool selected: false
+                            property color baseColor: "#555"
                             signal clicked
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
-                                color: "#EEE"
+                                color: parent.selected ? "#FFF" : "#EEE"
                             }
                             MouseArea {
                                 anchors.fill: parent
@@ -634,10 +700,10 @@ Item {
                                     parent.clicked()
                                 }
                                 onPressed: {
-                                    parent.color = "#999"
+                                    parent.color = Qt.lighter(parent.baseColor)
                                 }
                                 onReleased: {
-                                    parent.color = "#555"
+                                    parent.color = parent.baseColor
                                 }
                             }
                             //---- Redefinitions ----
@@ -653,9 +719,9 @@ Item {
                         Rectangle {
                             color: "#555"
                             height: 30
+                            property string text
                             signal discarded()
                             signal editingFinished(string value)
-                            property string text
                             TextInput {
                                 anchors.fill: parent
                                 horizontalAlignment: TextEdit.AlignHCenter
@@ -677,6 +743,7 @@ Item {
                                     bind()
                                 }
                                 onEditingFinished: {
+                                    focus = false
                                     parent.editingFinished(text)
                                     bind()
                                 }
@@ -699,12 +766,20 @@ Item {
                         //---------------
                         // @Button
                         Rectangle {
-                            color: "#555"
+                            color: baseColor
+                            property bool selected: false
+                            property color baseColor: "#555"
                             signal clicked
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
-                                color: "#EEE"
+                                color: parent.selected ? "#FFF" : "#EEE"
                             }
                             MouseArea {
                                 anchors.fill: parent
@@ -712,10 +787,10 @@ Item {
                                     parent.clicked()
                                 }
                                 onPressed: {
-                                    parent.color = "#999"
+                                    parent.color = Qt.lighter(parent.baseColor)
                                 }
                                 onReleased: {
-                                    parent.color = "#555"
+                                    parent.color = parent.baseColor
                                 }
                             }
                             //---- Redefinitions ----
@@ -748,13 +823,20 @@ Item {
                         //---------------
                         // @Button
                         Rectangle {
-                            color: "#555"
+                            color: baseColor
                             height: 30
+                            property color baseColor: "#555"
                             signal clicked
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
-                                color: "#EEE"
+                                color: parent.selected ? "#FFF" : "#EEE"
                             }
                             MouseArea {
                                 anchors.fill: parent
@@ -762,10 +844,10 @@ Item {
                                     parent.clicked()
                                 }
                                 onPressed: {
-                                    parent.color = "#999"
+                                    parent.color = Qt.lighter(parent.baseColor)
                                 }
                                 onReleased: {
-                                    parent.color = "#555"
+                                    parent.color = parent.baseColor
                                 }
                             }
                             //---- Redefinitions ----
@@ -780,6 +862,7 @@ Item {
 
                                 return label;
                             }
+                            property bool selected: root.currentPreset === index
                             onClicked: {
                                 root.currentPreset = index;
                             }
@@ -807,13 +890,21 @@ Item {
                     //---------------
                     // @Button
                     Rectangle {
-                        color: "#555"
+                        color: baseColor
                         height: 30
+                        property bool selected: false
+                        property color baseColor: "#555"
                         signal clicked
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "#FFF"
+                            opacity: 0.3
+                            visible: parent.selected
+                        }
                         Text {
                             text: parent.text
                             anchors.centerIn: parent
-                            color: "#EEE"
+                            color: parent.selected ? "#FFF" : "#EEE"
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -821,10 +912,10 @@ Item {
                                 parent.clicked()
                             }
                             onPressed: {
-                                parent.color = "#999"
+                                parent.color = Qt.lighter(parent.baseColor)
                             }
                             onReleased: {
-                                parent.color = "#555"
+                                parent.color = parent.baseColor
                             }
                         }
                         //---- Redefinitions ----

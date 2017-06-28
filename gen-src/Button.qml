@@ -1,17 +1,27 @@
 import QtQuick 2.2
 
 Rectangle {
-    color: "#555"
+    color: baseColor
     width: 100
     height: 30
 
     property string text: ""
+    property bool selected: false
+    property color baseColor: "#555"
+
     signal clicked
+
+    Rectangle {
+        anchors.fill: parent
+        color: "#FFF"
+        opacity: 0.3
+        visible: parent.selected
+    }
 
     Text {
         text: parent.text
         anchors.centerIn: parent
-        color: "#EEE"
+        color: parent.selected ? "#FFF" : "#EEE"
     }
 
     MouseArea {
@@ -20,10 +30,10 @@ Rectangle {
             parent.clicked()
         }
         onPressed: {
-            parent.color = "#999"
+            parent.color = Qt.lighter(parent.baseColor)
         }
         onReleased: {
-            parent.color = "#555"
+            parent.color = parent.baseColor
         }
     }
 }
