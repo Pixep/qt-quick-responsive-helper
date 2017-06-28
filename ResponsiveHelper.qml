@@ -229,7 +229,7 @@ Item {
                         anchors.centerIn: parent
                         columns: 5
                         rows: 2
-                        spacing: 4
+                        spacing: 3
                         Repeater { model: 10; Rectangle { width: 4; height: width; radius: width/2 } }
                     }
                 }
@@ -283,52 +283,6 @@ Item {
                     height: 10
                 }
 
-                //---------------
-                // @Button
-                Rectangle {
-                    color: baseColor
-                    height: 30
-                
-                    property bool selected: false
-                    property color baseColor: "#555"
-                
-                    signal clicked
-                
-                    Rectangle {
-                        anchors.fill: parent
-                        color: "#FFF"
-                        opacity: 0.3
-                        visible: parent.selected
-                    }
-                
-                    Text {
-                        text: parent.text
-                        anchors.centerIn: parent
-                        color: parent.selected ? "#FFF" : "#EEE"
-                    }
-                
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            parent.clicked()
-                        }
-                        onPressed: {
-                            parent.color = Qt.lighter(parent.baseColor)
-                        }
-                        onReleased: {
-                            parent.color = parent.baseColor
-                        }
-                    }
-                    //---- Redefinitions ----
-                    property string text: "Reset"
-                    width: parent.width
-                    onClicked: {
-                        root.setWindowWidth(d.initialWidth)
-                        root.setWindowHeight(d.initialHeight)
-                        root.pixelDensity = d.initialPixelDensity
-                    }
-                }
-
                 //***************************************************************************
                 // Responsive-related settings
                 //
@@ -336,6 +290,7 @@ Item {
                     width: parent.width
                     height: visible ? childrenRect.height : 0
                     visible: root.showResponiveToolbar
+                    spacing: 1
 
                     //---------------
                     // @Button
@@ -380,6 +335,52 @@ Item {
                             var height = targetWindow.height
                             root.setWindowHeight(root.targetWindow.width)
                             root.setWindowWidth(height)
+                        }
+                    }
+
+                    //---------------
+                    // @Button
+                    Rectangle {
+                        color: baseColor
+                        height: 30
+                    
+                        property bool selected: false
+                        property color baseColor: "#555"
+                    
+                        signal clicked
+                    
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "#FFF"
+                            opacity: 0.3
+                            visible: parent.selected
+                        }
+                    
+                        Text {
+                            text: parent.text
+                            anchors.centerIn: parent
+                            color: parent.selected ? "#FFF" : "#EEE"
+                        }
+                    
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                parent.clicked()
+                            }
+                            onPressed: {
+                                parent.color = Qt.lighter(parent.baseColor)
+                            }
+                            onReleased: {
+                                parent.color = parent.baseColor
+                            }
+                        }
+                        //---- Redefinitions ----
+                        property string text: "Reset"
+                        width: parent.width
+                        onClicked: {
+                            root.setWindowWidth(d.initialWidth)
+                            root.setWindowHeight(d.initialHeight)
+                            root.pixelDensity = d.initialPixelDensity
                         }
                     }
 

@@ -229,7 +229,7 @@ Item {
                         anchors.centerIn: parent
                         columns: 5
                         rows: 2
-                        spacing: 4
+                        spacing: 3
                         Repeater { model: 10; Rectangle { width: 4; height: width; radius: width/2 } }
                     }
                 }
@@ -247,16 +247,6 @@ Item {
                     height: 10
                 }
 
-                @Button {
-                    text: "Reset"
-                    width: parent.width
-                    onClicked: {
-                        root.setWindowWidth(d.initialWidth)
-                        root.setWindowHeight(d.initialHeight)
-                        root.pixelDensity = d.initialPixelDensity
-                    }
-                }
-
                 //***************************************************************************
                 // Responsive-related settings
                 //
@@ -264,6 +254,7 @@ Item {
                     width: parent.width
                     height: visible ? childrenRect.height : 0
                     visible: root.showResponiveToolbar
+                    spacing: 1
 
                     @Button {
                         width: parent.width
@@ -272,6 +263,16 @@ Item {
                             var height = targetWindow.height
                             root.setWindowHeight(root.targetWindow.width)
                             root.setWindowWidth(height)
+                        }
+                    }
+
+                    @Button {
+                        text: "Reset"
+                        width: parent.width
+                        onClicked: {
+                            root.setWindowWidth(d.initialWidth)
+                            root.setWindowHeight(d.initialHeight)
+                            root.pixelDensity = d.initialPixelDensity
                         }
                     }
 
