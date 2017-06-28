@@ -17,21 +17,20 @@ Rectangle {
         horizontalAlignment: TextEdit.AlignHCenter
         verticalAlignment: TextEdit.AlignVCenter
         color: "#EEE"
+        font.bold: true
         validator: IntValidator{bottom: 0; top: 5000;}
         property Item componentRoot: parent
 
         onFocusChanged: {
             parent.color = focus ? "#999" : "#555"
-
-            if (!focus) {
-                parent.text = text
-                validated(text)
-            }
         }
         Component.onCompleted: {
             bind()
+            validator.bottom = parent.minimum
+            validator.top = parent.maximum
         }
         Keys.onEscapePressed: {
+            focus = false
             bind()
         }
         onEditingFinished: {

@@ -1,6 +1,5 @@
 import QtQuick 2.2
 import QtQuick.Window 2.0
-import QtQuick.Controls 1.0
 
 Item {
     id: root
@@ -292,7 +291,7 @@ Item {
                     Row {
                         width: parent.width
                         height: childrenRect.height
-                        spacing: 0
+                        spacing: 1
 
                         @Button {
                             height: dpiEdit.height
@@ -306,6 +305,8 @@ Item {
                             id: dpiEdit
                             width: parent.width / 2
                             text: root.dpi.toFixed(0)
+                            minimum: 1
+                            maximum: 999
                             onEditingFinished: {
                                 root.setDpi(value)
                             }
@@ -338,7 +339,7 @@ Item {
                         id: row
                         width: parent.width
                         height: childrenRect.height
-                        spacing: 0
+                        spacing: 1
 
                         @Button {
                             height: widthEdit.height
@@ -386,7 +387,7 @@ Item {
                     Row {
                         width: parent.width
                         height: childrenRect.height
-                        spacing: 0
+                        spacing: 1
 
                         @Button {
                             height: heightEdit.height
@@ -396,27 +397,15 @@ Item {
                                 root.setWindowHeight(root.targetWindow.height / 1.1)
                             }
                         }
-                        TextField {
+                        @TextField {
                             id: heightEdit
                             width: parent.width / 2
-                            text: "N/A"
-                            validator: IntValidator {bottom: 10; top: 5000;}
-                            horizontalAlignment: Text.AlignHCenter
+                            text: root.targetWindow.height
+                            minimum: 10
+                            maximum: 5000
 
-                            Component.onCompleted: {
-                                bind();
-                            }
                             onEditingFinished: {
-                                root.setWindowHeight(text)
-                                bind();
-                            }
-                            Keys.onEscapePressed: {
-                                bind();
-                                focus = false
-                            }
-
-                            function bind() {
-                                text = Qt.binding(function() { return root.targetWindow.height } )
+                                root.setWindowHeight(value)
                             }
                         }
 
