@@ -5,12 +5,12 @@ Rectangle {
     width: 100
     height: 30
 
-    signal discarded()
-    signal editingFinished(string value)
-
     property string text
     property int minimum: 0
     property int maximum: 5000
+
+    signal discarded()
+    signal editingFinished(string value)
 
     TextInput {
         anchors.fill: parent
@@ -34,6 +34,7 @@ Rectangle {
             bind()
         }
         onEditingFinished: {
+            focus = false
             parent.editingFinished(text)
             bind()
         }

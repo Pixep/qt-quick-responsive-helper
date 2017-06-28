@@ -448,6 +448,7 @@ Item {
 
                                 return label;
                             }
+                            selected: root.currentPreset === index
                             onClicked: {
                                 root.currentPreset = index;
                             }
