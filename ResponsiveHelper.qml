@@ -1,6 +1,5 @@
 import QtQuick 2.2
 import QtQuick.Window 2.0
-import QtQuick.Controls 1.0
 
 Item {
     id: root
@@ -361,7 +360,7 @@ Item {
                     Row {
                         width: parent.width
                         height: childrenRect.height
-                        spacing: 0
+                        spacing: 1
 
                         //---------------
                         // @Button
@@ -401,26 +400,24 @@ Item {
                             signal discarded()
                             signal editingFinished(string value)
                             property string text
-                            property int minimum: 0
-                            property int maximum: 5000
                             TextInput {
                                 anchors.fill: parent
                                 horizontalAlignment: TextEdit.AlignHCenter
                                 verticalAlignment: TextEdit.AlignVCenter
                                 color: "#EEE"
+                                font.bold: true
                                 validator: IntValidator{bottom: 0; top: 5000;}
                                 property Item componentRoot: parent
                                 onFocusChanged: {
                                     parent.color = focus ? "#999" : "#555"
-                                    if (!focus) {
-                                        parent.text = text
-                                        validated(text)
-                                    }
                                 }
                                 Component.onCompleted: {
                                     bind()
+                                    validator.bottom = parent.minimum
+                                    validator.top = parent.maximum
                                 }
                                 Keys.onEscapePressed: {
+                                    focus = false
                                     bind()
                                 }
                                 onEditingFinished: {
@@ -435,6 +432,8 @@ Item {
                             id: dpiEdit
                             width: parent.width / 2
                             text: root.dpi.toFixed(0)
+                            property int minimum: 1
+                            property int maximum: 999
                             onEditingFinished: {
                                 root.setDpi(value)
                             }
@@ -489,7 +488,7 @@ Item {
                         id: row
                         width: parent.width
                         height: childrenRect.height
-                        spacing: 0
+                        spacing: 1
 
                         //---------------
                         // @Button
@@ -534,19 +533,19 @@ Item {
                                 horizontalAlignment: TextEdit.AlignHCenter
                                 verticalAlignment: TextEdit.AlignVCenter
                                 color: "#EEE"
+                                font.bold: true
                                 validator: IntValidator{bottom: 0; top: 5000;}
                                 property Item componentRoot: parent
                                 onFocusChanged: {
                                     parent.color = focus ? "#999" : "#555"
-                                    if (!focus) {
-                                        parent.text = text
-                                        validated(text)
-                                    }
                                 }
                                 Component.onCompleted: {
                                     bind()
+                                    validator.bottom = parent.minimum
+                                    validator.top = parent.maximum
                                 }
                                 Keys.onEscapePressed: {
+                                    focus = false
                                     bind()
                                 }
                                 onEditingFinished: {
@@ -617,7 +616,7 @@ Item {
                     Row {
                         width: parent.width
                         height: childrenRect.height
-                        spacing: 0
+                        spacing: 1
 
                         //---------------
                         // @Button
@@ -649,27 +648,51 @@ Item {
                                 root.setWindowHeight(root.targetWindow.height / 1.1)
                             }
                         }
-                        TextField {
+                        //---------------
+                        // @TextField
+                        Rectangle {
+                            color: "#555"
+                            height: 30
+                            signal discarded()
+                            signal editingFinished(string value)
+                            property string text
+                            TextInput {
+                                anchors.fill: parent
+                                horizontalAlignment: TextEdit.AlignHCenter
+                                verticalAlignment: TextEdit.AlignVCenter
+                                color: "#EEE"
+                                font.bold: true
+                                validator: IntValidator{bottom: 0; top: 5000;}
+                                property Item componentRoot: parent
+                                onFocusChanged: {
+                                    parent.color = focus ? "#999" : "#555"
+                                }
+                                Component.onCompleted: {
+                                    bind()
+                                    validator.bottom = parent.minimum
+                                    validator.top = parent.maximum
+                                }
+                                Keys.onEscapePressed: {
+                                    focus = false
+                                    bind()
+                                }
+                                onEditingFinished: {
+                                    parent.editingFinished(text)
+                                    bind()
+                                }
+                                function bind() {
+                                    text = Qt.binding(function() { return parent.text } )
+                                }
+                            }
+                            //---- Redefinitions ----
                             id: heightEdit
                             width: parent.width / 2
-                            text: "N/A"
-                            validator: IntValidator {bottom: 10; top: 5000;}
-                            horizontalAlignment: Text.AlignHCenter
+                            text: root.targetWindow.height
+                            property int minimum: 10
+                            property int maximum: 5000
 
-                            Component.onCompleted: {
-                                bind();
-                            }
                             onEditingFinished: {
-                                root.setWindowHeight(text)
-                                bind();
-                            }
-                            Keys.onEscapePressed: {
-                                bind();
-                                focus = false
-                            }
-
-                            function bind() {
-                                text = Qt.binding(function() { return root.targetWindow.height } )
+                                root.setWindowHeight(value)
                             }
                         }
 
