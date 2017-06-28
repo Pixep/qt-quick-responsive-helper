@@ -5,7 +5,7 @@ from shutil import copyfile
 def trimComponent(componentLines):
     linesToDelete = []
     for i in range(len(componentLines)):
-        if componentLines[i].startswith('import') or componentLines[i] == '\n':
+        if componentLines[i].startswith('import'):
             linesToDelete.append(i)
 
     for lineIndex in reversed(linesToDelete):
