@@ -1,6 +1,5 @@
 import QtQuick 2.2
 import QtQuick.Window 2.0
-import QtQuick.Controls 1.0
 
 Item {
     id: root
@@ -234,8 +233,45 @@ Item {
                         Repeater { model: 10; Rectangle { width: 4; height: width; radius: width/2 } }
                     }
                 }
-                Button {
-                    text: "Hide"
+
+                //---------------
+                // @Button
+                Rectangle {
+                    color: baseColor
+                    height: 30
+                
+                    property bool selected: false
+                    property color baseColor: "#555"
+                
+                    signal clicked
+                
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "#FFF"
+                        opacity: 0.3
+                        visible: parent.selected
+                    }
+                
+                    Text {
+                        text: parent.text
+                        anchors.centerIn: parent
+                        color: parent.selected ? "#FFF" : "#EEE"
+                    }
+                
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            parent.clicked()
+                        }
+                        onPressed: {
+                            parent.color = Qt.lighter(parent.baseColor)
+                        }
+                        onReleased: {
+                            parent.color = parent.baseColor
+                        }
+                    }
+                    //---- Redefinitions ----
+                    property string text: "Hide"
                     width: parent.width
                     onClicked: {
                         helperWindow.close()
@@ -247,8 +283,44 @@ Item {
                     height: 10
                 }
 
-                Button {
-                    text: "Reset"
+                //---------------
+                // @Button
+                Rectangle {
+                    color: baseColor
+                    height: 30
+                
+                    property bool selected: false
+                    property color baseColor: "#555"
+                
+                    signal clicked
+                
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "#FFF"
+                        opacity: 0.3
+                        visible: parent.selected
+                    }
+                
+                    Text {
+                        text: parent.text
+                        anchors.centerIn: parent
+                        color: parent.selected ? "#FFF" : "#EEE"
+                    }
+                
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            parent.clicked()
+                        }
+                        onPressed: {
+                            parent.color = Qt.lighter(parent.baseColor)
+                        }
+                        onReleased: {
+                            parent.color = parent.baseColor
+                        }
+                    }
+                    //---- Redefinitions ----
+                    property string text: "Reset"
                     width: parent.width
                     onClicked: {
                         root.setWindowWidth(d.initialWidth)
@@ -265,9 +337,45 @@ Item {
                     height: visible ? childrenRect.height : 0
                     visible: root.showResponiveToolbar
 
-                    Button {
+                    //---------------
+                    // @Button
+                    Rectangle {
+                        color: baseColor
+                        height: 30
+                    
+                        property bool selected: false
+                        property color baseColor: "#555"
+                    
+                        signal clicked
+                    
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "#FFF"
+                            opacity: 0.3
+                            visible: parent.selected
+                        }
+                    
+                        Text {
+                            text: parent.text
+                            anchors.centerIn: parent
+                            color: parent.selected ? "#FFF" : "#EEE"
+                        }
+                    
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                parent.clicked()
+                            }
+                            onPressed: {
+                                parent.color = Qt.lighter(parent.baseColor)
+                            }
+                            onReleased: {
+                                parent.color = parent.baseColor
+                            }
+                        }
+                        //---- Redefinitions ----
                         width: parent.width
-                        text: (targetWindow.height > targetWindow.width) ? "Landscape" : "Portrait"
+                        property string text: (targetWindow.height > targetWindow.width) ? "Landscape" : "Portrait"
                         onClicked: {
                             var height = targetWindow.height
                             root.setWindowHeight(root.targetWindow.width)
@@ -291,44 +399,142 @@ Item {
                     Row {
                         width: parent.width
                         height: childrenRect.height
-                        spacing: 0
+                        spacing: 1
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: baseColor
+                        
+                            property bool selected: false
+                            property color baseColor: "#555"
+                        
+                            signal clicked
+                        
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
+                        
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: parent.selected ? "#FFF" : "#EEE"
+                            }
+                        
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = Qt.lighter(parent.baseColor)
+                                }
+                                onReleased: {
+                                    parent.color = parent.baseColor
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: dpiEdit.height
                             width: parent.width / 4
-                            text: "-"
+                            property string text: "-"
                             onClicked: {
                                 root.pixelDensity /= 1.3
                             }
                         }
-                        TextField {
+                        //---------------
+                        // @TextField
+                        Rectangle {
+                            color: "#555"
+                            height: 30
+                        
+                            property string text
+                        
+                            signal discarded()
+                            signal editingFinished(string value)
+                        
+                            TextInput {
+                                anchors.fill: parent
+                                horizontalAlignment: TextEdit.AlignHCenter
+                                verticalAlignment: TextEdit.AlignVCenter
+                                color: "#EEE"
+                                font.bold: true
+                                validator: IntValidator{bottom: 0; top: 5000;}
+                                property Item componentRoot: parent
+                        
+                                onFocusChanged: {
+                                    parent.color = focus ? "#999" : "#555"
+                                }
+                                Component.onCompleted: {
+                                    bind()
+                                    validator.bottom = parent.minimum
+                                    validator.top = parent.maximum
+                                }
+                                Keys.onEscapePressed: {
+                                    focus = false
+                                    bind()
+                                }
+                                onEditingFinished: {
+                                    focus = false
+                                    parent.editingFinished(text)
+                                    bind()
+                                }
+                                function bind() {
+                                    text = Qt.binding(function() { return parent.text } )
+                                }
+                            }
+                            //---- Redefinitions ----
                             id: dpiEdit
                             width: parent.width / 2
-                            text: "N/A"
-                            validator: IntValidator {bottom: 1; top: 999;}
-                            horizontalAlignment: Text.AlignHCenter
-
-                            Component.onCompleted: {
-                                bind();
-                            }
+                            text: root.dpi.toFixed(0)
+                            property int minimum: 1
+                            property int maximum: 999
                             onEditingFinished: {
-                                root.setDpi(text)
-                                bind();
-                            }
-                            Keys.onEscapePressed: {
-                                bind();
-                                focus = false
-                            }
-
-                            function bind() {
-                                text = Qt.binding(function() { return root.dpi.toFixed(0) } )
+                                root.setDpi(value)
                             }
                         }
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: baseColor
+                        
+                            property bool selected: false
+                            property color baseColor: "#555"
+                        
+                            signal clicked
+                        
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
+                        
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: parent.selected ? "#FFF" : "#EEE"
+                            }
+                        
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = Qt.lighter(parent.baseColor)
+                                }
+                                onReleased: {
+                                    parent.color = parent.baseColor
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: dpiEdit.height
                             width: parent.width / 4
-                            text: "+"
+                            property string text: "+"
                             onClicked: {
                                 root.pixelDensity *= 1.3
                             }
@@ -352,44 +558,143 @@ Item {
                         id: row
                         width: parent.width
                         height: childrenRect.height
-                        spacing: 0
+                        spacing: 1
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: baseColor
+                        
+                            property bool selected: false
+                            property color baseColor: "#555"
+                        
+                            signal clicked
+                        
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
+                        
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: parent.selected ? "#FFF" : "#EEE"
+                            }
+                        
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = Qt.lighter(parent.baseColor)
+                                }
+                                onReleased: {
+                                    parent.color = parent.baseColor
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: widthEdit.height
                             width: parent.width / 4
-                            text: "-"
+                            property string text: "-"
                             onClicked: {
                                 root.setWindowWidth(root.targetWindow.width / 1.1)
                             }
                         }
-                        TextField {
+                        //---------------
+                        // @TextField
+                        Rectangle {
+                            color: "#555"
+                            height: 30
+                        
+                            property string text
+                        
+                            signal discarded()
+                            signal editingFinished(string value)
+                        
+                            TextInput {
+                                anchors.fill: parent
+                                horizontalAlignment: TextEdit.AlignHCenter
+                                verticalAlignment: TextEdit.AlignVCenter
+                                color: "#EEE"
+                                font.bold: true
+                                validator: IntValidator{bottom: 0; top: 5000;}
+                                property Item componentRoot: parent
+                        
+                                onFocusChanged: {
+                                    parent.color = focus ? "#999" : "#555"
+                                }
+                                Component.onCompleted: {
+                                    bind()
+                                    validator.bottom = parent.minimum
+                                    validator.top = parent.maximum
+                                }
+                                Keys.onEscapePressed: {
+                                    focus = false
+                                    bind()
+                                }
+                                onEditingFinished: {
+                                    focus = false
+                                    parent.editingFinished(text)
+                                    bind()
+                                }
+                                function bind() {
+                                    text = Qt.binding(function() { return parent.text } )
+                                }
+                            }
+                            //---- Redefinitions ----
                             id: widthEdit
                             width: parent.width / 2
-                            text: "N/A"
-                            validator: IntValidator {bottom: 10; top: 5000;}
-                            horizontalAlignment: Text.AlignHCenter
+                            property int minimum: 10
+                            property int maximum: 5000
+                            text: root.targetWindow.width
 
-                            Component.onCompleted: {
-                                bind();
-                            }
                             onEditingFinished: {
-                                root.setWindowWidth(text)
-                                bind();
-                            }
-                            Keys.onEscapePressed: {
-                                bind();
-                                focus = false
-                            }
-
-                            function bind() {
-                                text = Qt.binding(function() { return root.targetWindow.width } )
+                                root.setWindowWidth(value)
                             }
                         }
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: baseColor
+                        
+                            property bool selected: false
+                            property color baseColor: "#555"
+                        
+                            signal clicked
+                        
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
+                        
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: parent.selected ? "#FFF" : "#EEE"
+                            }
+                        
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = Qt.lighter(parent.baseColor)
+                                }
+                                onReleased: {
+                                    parent.color = parent.baseColor
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: widthEdit.height
                             width: parent.width / 4
-                            text: "+"
+                            property string text: "+"
                             onClicked: {
                                 root.setWindowWidth(root.targetWindow.width * 1.1)
                             }
@@ -412,44 +717,143 @@ Item {
                     Row {
                         width: parent.width
                         height: childrenRect.height
-                        spacing: 0
+                        spacing: 1
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: baseColor
+                        
+                            property bool selected: false
+                            property color baseColor: "#555"
+                        
+                            signal clicked
+                        
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
+                        
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: parent.selected ? "#FFF" : "#EEE"
+                            }
+                        
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = Qt.lighter(parent.baseColor)
+                                }
+                                onReleased: {
+                                    parent.color = parent.baseColor
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: heightEdit.height
                             width: parent.width / 4
-                            text: "-"
+                            property string text: "-"
                             onClicked: {
                                 root.setWindowHeight(root.targetWindow.height / 1.1)
                             }
                         }
-                        TextField {
+                        //---------------
+                        // @TextField
+                        Rectangle {
+                            color: "#555"
+                            height: 30
+                        
+                            property string text
+                        
+                            signal discarded()
+                            signal editingFinished(string value)
+                        
+                            TextInput {
+                                anchors.fill: parent
+                                horizontalAlignment: TextEdit.AlignHCenter
+                                verticalAlignment: TextEdit.AlignVCenter
+                                color: "#EEE"
+                                font.bold: true
+                                validator: IntValidator{bottom: 0; top: 5000;}
+                                property Item componentRoot: parent
+                        
+                                onFocusChanged: {
+                                    parent.color = focus ? "#999" : "#555"
+                                }
+                                Component.onCompleted: {
+                                    bind()
+                                    validator.bottom = parent.minimum
+                                    validator.top = parent.maximum
+                                }
+                                Keys.onEscapePressed: {
+                                    focus = false
+                                    bind()
+                                }
+                                onEditingFinished: {
+                                    focus = false
+                                    parent.editingFinished(text)
+                                    bind()
+                                }
+                                function bind() {
+                                    text = Qt.binding(function() { return parent.text } )
+                                }
+                            }
+                            //---- Redefinitions ----
                             id: heightEdit
                             width: parent.width / 2
-                            text: "N/A"
-                            validator: IntValidator {bottom: 10; top: 5000;}
-                            horizontalAlignment: Text.AlignHCenter
+                            text: root.targetWindow.height
+                            property int minimum: 10
+                            property int maximum: 5000
 
-                            Component.onCompleted: {
-                                bind();
-                            }
                             onEditingFinished: {
-                                root.setWindowHeight(text)
-                                bind();
-                            }
-                            Keys.onEscapePressed: {
-                                bind();
-                                focus = false
-                            }
-
-                            function bind() {
-                                text = Qt.binding(function() { return root.targetWindow.height } )
+                                root.setWindowHeight(value)
                             }
                         }
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: baseColor
+                        
+                            property bool selected: false
+                            property color baseColor: "#555"
+                        
+                            signal clicked
+                        
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
+                        
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: parent.selected ? "#FFF" : "#EEE"
+                            }
+                        
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = Qt.lighter(parent.baseColor)
+                                }
+                                onReleased: {
+                                    parent.color = parent.baseColor
+                                }
+                            }
+                            //---- Redefinitions ----
                             height: heightEdit.height
                             width: parent.width / 4
-                            text: "+"
+                            property string text: "+"
                             onClicked: {
                                 root.setWindowHeight(root.targetWindow.height * 1.1)
                             }
@@ -473,9 +877,44 @@ Item {
                     Repeater {
                         model: root.presets
 
-                        Button {
+                        //---------------
+                        // @Button
+                        Rectangle {
+                            color: baseColor
+                            height: 30
+                        
+                            property color baseColor: "#555"
+                        
+                            signal clicked
+                        
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#FFF"
+                                opacity: 0.3
+                                visible: parent.selected
+                            }
+                        
+                            Text {
+                                text: parent.text
+                                anchors.centerIn: parent
+                                color: parent.selected ? "#FFF" : "#EEE"
+                            }
+                        
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    parent.clicked()
+                                }
+                                onPressed: {
+                                    parent.color = Qt.lighter(parent.baseColor)
+                                }
+                                onReleased: {
+                                    parent.color = parent.baseColor
+                                }
+                            }
+                            //---- Redefinitions ----
                             width: parent.width
-                            text: {
+                            property string text: {
                                 var label = model.width + " x " + model.height;
                                 if (model.dpi)
                                     label += " (" + model.dpi + "dpi)";
@@ -485,6 +924,7 @@ Item {
 
                                 return label;
                             }
+                            property bool selected: root.currentPreset === index
                             onClicked: {
                                 root.currentPreset = index;
                             }
@@ -509,9 +949,45 @@ Item {
                 Repeater {
                     model: root.actions
 
-                    Button {
+                    //---------------
+                    // @Button
+                    Rectangle {
+                        color: baseColor
+                        height: 30
+                    
+                        property bool selected: false
+                        property color baseColor: "#555"
+                    
+                        signal clicked
+                    
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "#FFF"
+                            opacity: 0.3
+                            visible: parent.selected
+                        }
+                    
+                        Text {
+                            text: parent.text
+                            anchors.centerIn: parent
+                            color: parent.selected ? "#FFF" : "#EEE"
+                        }
+                    
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                parent.clicked()
+                            }
+                            onPressed: {
+                                parent.color = Qt.lighter(parent.baseColor)
+                            }
+                            onReleased: {
+                                parent.color = parent.baseColor
+                            }
+                        }
+                        //---- Redefinitions ----
                         width: parent.width
-                        text: model.text
+                        property string text: model.text
                         onClicked: {
                             root.actionClicked(index);
                         }

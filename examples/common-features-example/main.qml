@@ -69,29 +69,46 @@ Window {
     property real scaleFactor: width / 640
     property real dpiScaleFactor: helperBar.dpi / 20
 
-    Text {
-        id: textEdit
-        text: qsTr("Some text")
-        verticalAlignment: Text.AlignVCenter
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 20
-        font.pixelSize: 20 * window.scaleFactor
+    Rectangle {
+        id: header
+        width: parent.width
+        height: 30 * window.scaleFactor
+        color: "#DDD"
+
+        Text {
+            id: textEdit
+            text: qsTr("Some text")
+            font.pixelSize: 20 * window.scaleFactor
+            anchors.centerIn: parent
+        }
     }
 
-    Flow {
-        anchors.top: textEdit.bottom
-        anchors.topMargin: 10
-        height: 4000//parent.height - textEdit.y - textEdit.height
+    Flickable {
         width: parent.width
-        spacing: 10
+        anchors.top: header.bottom
+        anchors.topMargin: 10
+        height: parent.height - header.height - header.y
+        contentHeight: flow.height
+        clip: true
 
-        Repeater {
-            model: 15
-            Rectangle {
-                width: 25 * window.dpiScaleFactor
-                height: width
-                color: "blue"
+        Grid {
+            id: flow
+            height: childrenRect.height
+            width: columns * (spacing + rectSize)
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 10
+            columns: parent.width / (spacing + rectSize)
+            rows: 15
+
+            property int rectSize: 25 * window.dpiScaleFactor
+
+            Repeater {
+                model: 15
+                Rectangle {
+                    width: parent.rectSize
+                    height: width
+                    color: "blue"
+                }
             }
         }
     }
