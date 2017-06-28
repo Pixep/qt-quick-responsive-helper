@@ -2,22 +2,25 @@
 A simple helper window for QtQuick based applications, to let developers test different resolutions and dpi settings easily. It was made to be integrated with minimal effort (only one QML file), and to be configurable for your specific usage.
 
 Main features:
-- Set application width and height
-- Set dpi / pixelDensity (without altering Screen.pixelDensity)
+- Manually set application width and height
+- Manually set dpi / pixelDensity (independent from Screen.pixelDensity)
 - Switch to landscape and portrait mode
 - Use presets to quickly test your commonly used settings
+- Add buttons to manage custom actions, or even custom content to the bar
 - Can be disabled for production with a single property
 
-Compatible with Qt 5.2 and higher.
+Compatible with Qt 5.2 and higher, requires only a QtQuick Window component (for now).
 
-![Responsive helper window screenshot](http://i.imgur.com/YGlP5Xc.png)
+![Responsive helper window screenshot](http://i.imgur.com/SQZYz9U.png)
 
 ## Installation ##
-Clone or simply copy the `ResponsiveHelper.qml` file to your project's qml files.
-When cloning the repository, you can build a simple example application from the `example` folder.
+Clone or simply copy the `ResponsiveHelper.qml` file into your project.
+When cloning the repository, you will have two example applications in the `examples` folder:
+- minimal-example
+- common-features-example
 
 ## Minimal working example ##
-Just drop it in your project, and set the `appWindow` property to be the Window instance of your application:
+Just drop it in your project, and set the `targetWindow` property to be the Window instance of your application:
 
 `main.qml`
 ```
@@ -25,13 +28,14 @@ Window {
     id: window
 
     ResponsiveHelper {
-        appWindow: window
+        targetWindow: window
     }
 }
 ```
 
 ## QML usage ##
-You can add a set of resolutions as shortcuts for a one click change with the `resolutions` property. The element cannot overwrite DPI / pixel density, but let you use the value to stub the usual `Screen.pixelDensity`.
+You can add a set of resolutions/dpi as shortcuts in the bar, with the `presets` property. It will modify your windows's size, and provide you `dpi` and `pixelDensity` properties, instead of `Screen.pixelDensity`.
+The example below also shows how to add custom actions (buttons) and even arbitrary content to the bar.
 
 `main.qml`
 ```
@@ -43,15 +47,14 @@ Window {
     width: 480
     height: 800
 
-    // Place it in a Loader to avoid loading it in production
     ResponsiveHelper {
-        active: true
-        appWindow: window
+        targetWindow: window
 
-        position: Qt.LeftEdge
-        distance: 50
+        anchors.left: parent.right
+        anchors.leftMargin: 30
 
         // List your common presets to be applied to your application
+        initialPreset: 0        
         presets: ListModel {
             ListElement { width: 720; height: 1024; dpi: 150 }
             ListElement { width: 480; height: 800 }
@@ -60,6 +63,27 @@ Window {
         // Handle dpi or pixelDensity changes as you wish, instead of "Screen.pixelDensity"
         onDpiChanged: { }
         onPixelDensityChanged: { }
+        
+        // Add action buttons
+        actions: ListModel {
+            ListElement { text: "MyAction1" }
+            ListElement { text: "MyAction2" }
+        }        
+        // Handle clicks on your actions
+        onActionClicked: {
+            console.log("Action " + actionIndex + " clicked")
+        }
+        
+        // ... Or add your own content directly
+        extraContent: [
+            Button {
+                text: "My custom content"
+                width: parent.width
+                onClicked: {
+                    window.close()
+                }
+            }
+        ]        
     }
 }
 ```
