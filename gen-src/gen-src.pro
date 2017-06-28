@@ -6,5 +6,8 @@ system(python combine-qml.py)
 
 OTHER_FILES = \
     combine-qml.py \
-    ResponsiveHelper.original.qml \
-    Button.qml
+    Button.qml \
+    TextField.qml
+
+DISTFILES += \
+    ResponsiveHelper-base.qml

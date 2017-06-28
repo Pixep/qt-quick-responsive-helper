@@ -302,27 +302,12 @@ Item {
                                 root.pixelDensity /= 1.3
                             }
                         }
-                        TextField {
+                        @TextField {
                             id: dpiEdit
                             width: parent.width / 2
-                            text: "N/A"
-                            validator: IntValidator {bottom: 1; top: 999;}
-                            horizontalAlignment: Text.AlignHCenter
-
-                            Component.onCompleted: {
-                                bind();
-                            }
+                            text: root.dpi.toFixed(0)
                             onEditingFinished: {
-                                root.setDpi(text)
-                                bind();
-                            }
-                            Keys.onEscapePressed: {
-                                bind();
-                                focus = false
-                            }
-
-                            function bind() {
-                                text = Qt.binding(function() { return root.dpi.toFixed(0) } )
+                                root.setDpi(value)
                             }
                         }
 
@@ -363,27 +348,15 @@ Item {
                                 root.setWindowWidth(root.targetWindow.width / 1.1)
                             }
                         }
-                        TextField {
+                        @TextField {
                             id: widthEdit
                             width: parent.width / 2
-                            text: "N/A"
-                            validator: IntValidator {bottom: 10; top: 5000;}
-                            horizontalAlignment: Text.AlignHCenter
+                            minimum: 10
+                            maximum: 5000
+                            text: root.targetWindow.width
 
-                            Component.onCompleted: {
-                                bind();
-                            }
                             onEditingFinished: {
-                                root.setWindowWidth(text)
-                                bind();
-                            }
-                            Keys.onEscapePressed: {
-                                bind();
-                                focus = false
-                            }
-
-                            function bind() {
-                                text = Qt.binding(function() { return root.targetWindow.width } )
+                                root.setWindowWidth(value)
                             }
                         }
 

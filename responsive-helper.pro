@@ -9,3 +9,5 @@ OTHER_FILES = \
 
 OTHER_FILES += \
     gen-src/ResponsiveHelper.original.qml
+
+examples.depends = gen-src

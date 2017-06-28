@@ -393,27 +393,50 @@ Item {
                                 root.pixelDensity /= 1.3
                             }
                         }
-                        TextField {
+                        //---------------
+                        // @TextField
+                        Rectangle {
+                            color: "#555"
+                            height: 30
+                            signal discarded()
+                            signal editingFinished(string value)
+                            property string text
+                            property int minimum: 0
+                            property int maximum: 5000
+                            TextInput {
+                                anchors.fill: parent
+                                horizontalAlignment: TextEdit.AlignHCenter
+                                verticalAlignment: TextEdit.AlignVCenter
+                                color: "#EEE"
+                                validator: IntValidator{bottom: 0; top: 5000;}
+                                property Item componentRoot: parent
+                                onFocusChanged: {
+                                    parent.color = focus ? "#999" : "#555"
+                                    if (!focus) {
+                                        parent.text = text
+                                        validated(text)
+                                    }
+                                }
+                                Component.onCompleted: {
+                                    bind()
+                                }
+                                Keys.onEscapePressed: {
+                                    bind()
+                                }
+                                onEditingFinished: {
+                                    parent.editingFinished(text)
+                                    bind()
+                                }
+                                function bind() {
+                                    text = Qt.binding(function() { return parent.text } )
+                                }
+                            }
+                            //---- Redefinitions ----
                             id: dpiEdit
                             width: parent.width / 2
-                            text: "N/A"
-                            validator: IntValidator {bottom: 1; top: 999;}
-                            horizontalAlignment: Text.AlignHCenter
-
-                            Component.onCompleted: {
-                                bind();
-                            }
+                            text: root.dpi.toFixed(0)
                             onEditingFinished: {
-                                root.setDpi(text)
-                                bind();
-                            }
-                            Keys.onEscapePressed: {
-                                bind();
-                                focus = false
-                            }
-
-                            function bind() {
-                                text = Qt.binding(function() { return root.dpi.toFixed(0) } )
+                                root.setDpi(value)
                             }
                         }
 
@@ -498,27 +521,51 @@ Item {
                                 root.setWindowWidth(root.targetWindow.width / 1.1)
                             }
                         }
-                        TextField {
+                        //---------------
+                        // @TextField
+                        Rectangle {
+                            color: "#555"
+                            height: 30
+                            signal discarded()
+                            signal editingFinished(string value)
+                            property string text
+                            TextInput {
+                                anchors.fill: parent
+                                horizontalAlignment: TextEdit.AlignHCenter
+                                verticalAlignment: TextEdit.AlignVCenter
+                                color: "#EEE"
+                                validator: IntValidator{bottom: 0; top: 5000;}
+                                property Item componentRoot: parent
+                                onFocusChanged: {
+                                    parent.color = focus ? "#999" : "#555"
+                                    if (!focus) {
+                                        parent.text = text
+                                        validated(text)
+                                    }
+                                }
+                                Component.onCompleted: {
+                                    bind()
+                                }
+                                Keys.onEscapePressed: {
+                                    bind()
+                                }
+                                onEditingFinished: {
+                                    parent.editingFinished(text)
+                                    bind()
+                                }
+                                function bind() {
+                                    text = Qt.binding(function() { return parent.text } )
+                                }
+                            }
+                            //---- Redefinitions ----
                             id: widthEdit
                             width: parent.width / 2
-                            text: "N/A"
-                            validator: IntValidator {bottom: 10; top: 5000;}
-                            horizontalAlignment: Text.AlignHCenter
+                            property int minimum: 10
+                            property int maximum: 5000
+                            text: root.targetWindow.width
 
-                            Component.onCompleted: {
-                                bind();
-                            }
                             onEditingFinished: {
-                                root.setWindowWidth(text)
-                                bind();
-                            }
-                            Keys.onEscapePressed: {
-                                bind();
-                                focus = false
-                            }
-
-                            function bind() {
-                                text = Qt.binding(function() { return root.targetWindow.width } )
+                                root.setWindowWidth(value)
                             }
                         }
 
