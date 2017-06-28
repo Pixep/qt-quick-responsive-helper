@@ -239,20 +239,25 @@ Item {
                 Rectangle {
                     color: baseColor
                     height: 30
+                
                     property bool selected: false
                     property color baseColor: "#555"
+                
                     signal clicked
+                
                     Rectangle {
                         anchors.fill: parent
                         color: "#FFF"
                         opacity: 0.3
                         visible: parent.selected
                     }
+                
                     Text {
                         text: parent.text
                         anchors.centerIn: parent
                         color: parent.selected ? "#FFF" : "#EEE"
                     }
+                
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
@@ -283,20 +288,25 @@ Item {
                 Rectangle {
                     color: baseColor
                     height: 30
+                
                     property bool selected: false
                     property color baseColor: "#555"
+                
                     signal clicked
+                
                     Rectangle {
                         anchors.fill: parent
                         color: "#FFF"
                         opacity: 0.3
                         visible: parent.selected
                     }
+                
                     Text {
                         text: parent.text
                         anchors.centerIn: parent
                         color: parent.selected ? "#FFF" : "#EEE"
                     }
+                
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
@@ -332,20 +342,25 @@ Item {
                     Rectangle {
                         color: baseColor
                         height: 30
+                    
                         property bool selected: false
                         property color baseColor: "#555"
+                    
                         signal clicked
+                    
                         Rectangle {
                             anchors.fill: parent
                             color: "#FFF"
                             opacity: 0.3
                             visible: parent.selected
                         }
+                    
                         Text {
                             text: parent.text
                             anchors.centerIn: parent
                             color: parent.selected ? "#FFF" : "#EEE"
                         }
+                    
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
@@ -390,20 +405,25 @@ Item {
                         // @Button
                         Rectangle {
                             color: baseColor
+                        
                             property bool selected: false
                             property color baseColor: "#555"
+                        
                             signal clicked
+                        
                             Rectangle {
                                 anchors.fill: parent
                                 color: "#FFF"
                                 opacity: 0.3
                                 visible: parent.selected
                             }
+                        
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
                                 color: parent.selected ? "#FFF" : "#EEE"
                             }
+                        
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
@@ -429,9 +449,12 @@ Item {
                         Rectangle {
                             color: "#555"
                             height: 30
+                        
                             property string text
+                        
                             signal discarded()
                             signal editingFinished(string value)
+                        
                             TextInput {
                                 anchors.fill: parent
                                 horizontalAlignment: TextEdit.AlignHCenter
@@ -440,6 +463,7 @@ Item {
                                 font.bold: true
                                 validator: IntValidator{bottom: 0; top: 5000;}
                                 property Item componentRoot: parent
+                        
                                 onFocusChanged: {
                                     parent.color = focus ? "#999" : "#555"
                                 }
@@ -476,20 +500,25 @@ Item {
                         // @Button
                         Rectangle {
                             color: baseColor
+                        
                             property bool selected: false
                             property color baseColor: "#555"
+                        
                             signal clicked
+                        
                             Rectangle {
                                 anchors.fill: parent
                                 color: "#FFF"
                                 opacity: 0.3
                                 visible: parent.selected
                             }
+                        
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
                                 color: parent.selected ? "#FFF" : "#EEE"
                             }
+                        
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
@@ -535,20 +564,25 @@ Item {
                         // @Button
                         Rectangle {
                             color: baseColor
+                        
                             property bool selected: false
                             property color baseColor: "#555"
+                        
                             signal clicked
+                        
                             Rectangle {
                                 anchors.fill: parent
                                 color: "#FFF"
                                 opacity: 0.3
                                 visible: parent.selected
                             }
+                        
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
                                 color: parent.selected ? "#FFF" : "#EEE"
                             }
+                        
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
@@ -574,9 +608,12 @@ Item {
                         Rectangle {
                             color: "#555"
                             height: 30
+                        
                             property string text
+                        
                             signal discarded()
                             signal editingFinished(string value)
+                        
                             TextInput {
                                 anchors.fill: parent
                                 horizontalAlignment: TextEdit.AlignHCenter
@@ -585,6 +622,7 @@ Item {
                                 font.bold: true
                                 validator: IntValidator{bottom: 0; top: 5000;}
                                 property Item componentRoot: parent
+                        
                                 onFocusChanged: {
                                     parent.color = focus ? "#999" : "#555"
                                 }
@@ -622,20 +660,25 @@ Item {
                         // @Button
                         Rectangle {
                             color: baseColor
+                        
                             property bool selected: false
                             property color baseColor: "#555"
+                        
                             signal clicked
+                        
                             Rectangle {
                                 anchors.fill: parent
                                 color: "#FFF"
                                 opacity: 0.3
                                 visible: parent.selected
                             }
+                        
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
                                 color: parent.selected ? "#FFF" : "#EEE"
                             }
+                        
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
@@ -680,20 +723,25 @@ Item {
                         // @Button
                         Rectangle {
                             color: baseColor
+                        
                             property bool selected: false
                             property color baseColor: "#555"
+                        
                             signal clicked
+                        
                             Rectangle {
                                 anchors.fill: parent
                                 color: "#FFF"
                                 opacity: 0.3
                                 visible: parent.selected
                             }
+                        
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
                                 color: parent.selected ? "#FFF" : "#EEE"
                             }
+                        
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
@@ -719,9 +767,12 @@ Item {
                         Rectangle {
                             color: "#555"
                             height: 30
+                        
                             property string text
+                        
                             signal discarded()
                             signal editingFinished(string value)
+                        
                             TextInput {
                                 anchors.fill: parent
                                 horizontalAlignment: TextEdit.AlignHCenter
@@ -730,6 +781,7 @@ Item {
                                 font.bold: true
                                 validator: IntValidator{bottom: 0; top: 5000;}
                                 property Item componentRoot: parent
+                        
                                 onFocusChanged: {
                                     parent.color = focus ? "#999" : "#555"
                                 }
@@ -767,20 +819,25 @@ Item {
                         // @Button
                         Rectangle {
                             color: baseColor
+                        
                             property bool selected: false
                             property color baseColor: "#555"
+                        
                             signal clicked
+                        
                             Rectangle {
                                 anchors.fill: parent
                                 color: "#FFF"
                                 opacity: 0.3
                                 visible: parent.selected
                             }
+                        
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
                                 color: parent.selected ? "#FFF" : "#EEE"
                             }
+                        
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
@@ -825,19 +882,24 @@ Item {
                         Rectangle {
                             color: baseColor
                             height: 30
+                        
                             property color baseColor: "#555"
+                        
                             signal clicked
+                        
                             Rectangle {
                                 anchors.fill: parent
                                 color: "#FFF"
                                 opacity: 0.3
                                 visible: parent.selected
                             }
+                        
                             Text {
                                 text: parent.text
                                 anchors.centerIn: parent
                                 color: parent.selected ? "#FFF" : "#EEE"
                             }
+                        
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
@@ -892,20 +954,25 @@ Item {
                     Rectangle {
                         color: baseColor
                         height: 30
+                    
                         property bool selected: false
                         property color baseColor: "#555"
+                    
                         signal clicked
+                    
                         Rectangle {
                             anchors.fill: parent
                             color: "#FFF"
                             opacity: 0.3
                             visible: parent.selected
                         }
+                    
                         Text {
                             text: parent.text
                             anchors.centerIn: parent
                             color: parent.selected ? "#FFF" : "#EEE"
                         }
+                    
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {

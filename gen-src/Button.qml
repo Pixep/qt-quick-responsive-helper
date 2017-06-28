@@ -1,5 +1,4 @@
 import QtQuick 2.2
-
 Rectangle {
     color: baseColor
     width: 100
