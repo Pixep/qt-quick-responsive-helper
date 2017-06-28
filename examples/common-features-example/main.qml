@@ -46,7 +46,7 @@ Window {
         // Your buttons or content
         extraContent: [
             Button {
-                text: "My Close Button"
+                text: "My custom content"
                 width: parent.width
                 onClicked: {
                     window.close()
