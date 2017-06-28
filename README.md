@@ -1,7 +1,7 @@
 # Qt Quick Responsive Helper
-A simple helper window for QtQuick based applications, to let developers test different resolutions and dpi settings easily. It was made to be integrated with minimal effort (only one QML file), and to be configurable for your specific usage.
+A simple helper window for QtQuick based applications, to let developers test different resolutions and dpi settings easily. It was made to be integrated with minimal effort ([only one QML file](ResponsiveHelper.qml)), and to be configurable for your specific usage.
 
-Main features:
+## Main features ##
 - Manually set application width and height
 - Manually set dpi / pixelDensity (independent from Screen.pixelDensity)
 - Switch to landscape and portrait mode
@@ -14,10 +14,10 @@ Compatible with Qt 5.2 and higher, requires only a QtQuick Window component (for
 ![Responsive helper window screenshot](http://i.imgur.com/SQZYz9U.png)
 
 ## Installation ##
-Clone or simply copy the `ResponsiveHelper.qml` file into your project.
+Clone or simply copy the [ResponsiveHelper.qml](ResponsiveHelper.qml) file into your project.
 When cloning the repository, you will have two example applications in the `examples` folder:
-- minimal-example
-- common-features-example
+- [minimal-example](examples/minimal-example/main.qml)
+- [common-features-example](examples/common-features-example/main.qml)
 
 ## Minimal working example ##
 Just drop it in your project, and set the `targetWindow` property to be the Window instance of your application:
@@ -87,3 +87,8 @@ Window {
     }
 }
 ```
+
+For additional details, you can have a look at the examples provided with the project, from the [Installation](#installation) chapter.
+
+## Contribution ##
+Project is open to contribution, just contact me or directly hack it, if you are willing to help.
