@@ -115,6 +115,20 @@ Item {
 
         property int textHeight: 20
 
+        function updateCurrentPreset() {
+            var preset = presets.get(root.currentPreset);
+            if (!preset || (targetWindow.width !== preset.width || targetWindow.height !== preset.height)) {
+                for (var i = 0; i < presets.count; ++i) {
+                    var p = presets.get(i)
+                    if (p.width === targetWindow.width && p.height === targetWindow.height) {
+                        root.currentPreset = i
+                        return
+                    }
+                }
+                root.currentPreset = -1
+            }
+        }
+
         function setPreset(index) {
             if (index < 0 || index > presets.count-1) {
                 return;
@@ -135,16 +149,8 @@ Item {
 
     Connections {
         target: targetWindow
-        onWidthChanged: {
-            var preset = presets.get(root.currentPreset);
-            if (preset && targetWindow.width !== preset.width)
-                root.currentPreset = -1
-        }
-        onHeightChanged: {
-            var preset = presets.get(root.currentPreset);
-            if (preset && targetWindow.height !== preset.height)
-                root.currentPreset = -1
-        }
+        onWidthChanged: { d.updateCurrentPreset() }
+        onHeightChanged: { d.updateCurrentPreset() }
     }
 
     Loader {
