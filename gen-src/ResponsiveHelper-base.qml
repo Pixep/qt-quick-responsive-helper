@@ -76,11 +76,12 @@ Item {
                 targetWindow.x = Math.max(0, targetWindow.x - diff)
         }
 
-        targetWindow.width = value;
+        targetWindow.width = newWidth;
     }
 
     function setWindowHeight(value) {
-        targetWindow.height = value;
+        var newHeight = (1*value).toFixed(0);
+        targetWindow.height = newHeight;
     }
 
     //**********************
