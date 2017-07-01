@@ -99,7 +99,7 @@ Item {
 
     onDpiChanged: {
         var preset = presets.get(root.currentPreset);
-        if (preset && targetWindow.dpi !== preset.dpi)
+        if (preset && root.dpi !== preset.dpi)
             root.currentPreset = -1
     }
 
