@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 
 SUBDIRS = \
     examples \
-    gen-src
+    src
 
 OTHER_FILES = \
     ResponsiveHelper.qml
@@ -10,4 +10,4 @@ OTHER_FILES = \
 OTHER_FILES += \
     gen-src/ResponsiveHelper.original.qml
 
-examples.depends = gen-src
+#examples.depends = gen-src
