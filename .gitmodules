@@ -1,0 +1,3 @@
+[submodule "src/combine-qml"]
+	path = src/combine-qml
+	url = https://github.com/Pixep/qml-files-combiner.git
