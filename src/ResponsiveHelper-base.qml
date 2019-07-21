@@ -179,6 +179,7 @@ Item {
             height: root.height
             color: "#202020"
             flags: Qt.FramelessWindowHint
+            contentItem.opacity: handleMouseArea.pressed ? 0.3 : 1
 
             property point windowOffset: Qt.point(0, 0)
 
@@ -217,7 +218,7 @@ Item {
                 }
 
                 MouseArea {
-                    id: mouseArea
+                    id: handleMouseArea
                     width: parent.width
                     height: 20
 
@@ -227,7 +228,7 @@ Item {
                         originMousePosition.x = mouseX
                         originMousePosition.y = mouseY
                     }
-                    onPositionChanged: {
+                    onReleased: {
                         helperWindow.windowOffset.x += mouseX - originMousePosition.x
                         helperWindow.windowOffset.y += mouseY - originMousePosition.y
                     }
