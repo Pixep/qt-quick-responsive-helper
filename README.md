@@ -14,10 +14,13 @@ Compatible with Qt 5.2 and higher, requires only a QtQuick Window component (for
 ![Responsive helper window screenshot](http://i.imgur.com/SQZYz9U.png)
 
 ## Installation ##
-Clone or simply copy the [ResponsiveHelper.qml](ResponsiveHelper.qml) file into your project.
-When cloning the repository, you will have two example applications in the `examples` folder:
-- [minimal-example](examples/minimal-example/main.qml)
-- [common-features-example](examples/common-features-example/main.qml)
+
+You can either:
+
+- Copy [ResponsiveHelper.qml](ResponsiveHelper.qml) into your project
+- or clone the repository, and use it as you see fit. The `examples` folder contains:
+  - [minimal-example](examples/minimal-example/main.qml)
+  - [common-features-example](examples/common-features-example/main.qml)
 
 ## Minimal working example ##
 Just drop it in your project, and set the `targetWindow` property to be the Window instance of your application:
