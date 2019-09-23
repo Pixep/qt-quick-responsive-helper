@@ -1,7 +1,7 @@
 # Qt Quick Responsive Helper
 A simple helper window for QtQuick based applications, to let developers test different resolutions and dpi settings easily. It was made to be integrated with minimal effort ([only one QML file](ResponsiveHelper.qml)), and to be configurable for your specific usage.
 
-## Main features ##
+## Main features
 - Manually set application width and height
 - Manually set dpi / pixelDensity (independent from Screen.pixelDensity)
 - Switch to landscape and portrait mode
@@ -9,11 +9,11 @@ A simple helper window for QtQuick based applications, to let developers test di
 - Add buttons to manage custom actions, or even custom content to the bar
 - Can be disabled for production with a single property
 
-Compatible with Qt 5.2 and higher, requires only a QtQuick Window component (for now).
+Compatible with Qt 5.2 and higher, requires only QtQuick 2 and QtQuick Window module (for now).
 
 ![Responsive helper window screenshot](http://i.imgur.com/SQZYz9U.png)
 
-## Installation ##
+## Installation
 
 You can either:
 
@@ -22,7 +22,7 @@ You can either:
   - [minimal-example](examples/minimal-example/main.qml)
   - [common-features-example](examples/common-features-example/main.qml)
 
-## Minimal working example ##
+## Minimal working example
 Just drop it in your project, and set the `targetWindow` property to be the Window instance of your application:
 
 `main.qml`
@@ -36,9 +36,61 @@ Window {
 }
 ```
 
-## QML usage ##
-You can add a set of resolutions/dpi as shortcuts in the bar, with the `presets` property. It will modify your windows's size, and provide you `dpi` and `pixelDensity` properties, instead of `Screen.pixelDensity`.
-The example below also shows how to add custom actions (buttons) and even arbitrary content to the bar.
+## Additional features
+
+### Presets
+
+You can add a set of resolutions/dpi shortcuts in the bar using `presets` property. Preset will modify automatically your `window` resolution. See [DPI](#dpi) to integrate DPI settings in your application.
+
+`main.qml`
+```
+Window {
+    id: window
+
+    ResponsiveHelper {
+        targetWindow: window
+
+        // List your common presets to be applied to your application
+        initialPreset: 0
+        presets: ListModel {
+            ListElement { width: 720; height: 1024; dpi: 150 } // Mobile
+            ListElement { width: 1920; height: 1080; dpi: 72 } // Desktop
+        }
+    }
+}
+```
+
+### DPI
+
+As Qt `Screen.pixelDensity` property cannot be altered, the ResponsiveHelper provides two properties you can use instead:
+
+* The `dpi` property
+  * in Dots per inch (actually Pixel per inch here)
+* The `pixelDensity` property
+  * a drop-in replacement for Qt's `Screen.pixelDensity`, in Pixel per millimeter
+
+`main.qml`
+```
+Window {
+    id: window
+
+    ResponsiveHelper {
+        id: helper
+        targetWindow: window
+        presets: ...
+    }
+    
+    MyHeader {
+        width: parent.width
+        // 100 pixels high at 72 DPI
+        height: 100 * helper.dpi / 72
+    }
+}
+```
+
+## Example
+
+The example below show presets, how to add custom actions (buttons) and even arbitrary content to the bar.
 
 `main.qml`
 ```
@@ -90,6 +142,8 @@ Window {
     }
 }
 ```
+
+See the [full QML example](examples/common-features-example/main.qml) for more details.
 
 For additional details, you can have a look at the examples provided with the project, from the [Installation](#installation) chapter.
 
