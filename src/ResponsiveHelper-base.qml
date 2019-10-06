@@ -19,7 +19,13 @@ Item {
     property bool showResponiveToolbar: true
 
     // List of presets to display
-    property ListModel presets: ListModel {}
+    property ListModel presets: ListModel {
+        ListElement { label: "Galaxy Note 9"; width: 1440; height: 2960; dpi: 516}
+        ListElement { label: "Galaxy S7"; width: 1440; height: 2560; dpi: 577}
+        ListElement { label: "Galaxy S5"; width: 1080; height: 1920; dpi: 432}
+        ListElement { label: "iPhone 6/7"; width: 750; height: 1334; dpi: 326}
+        ListElement { label: "Galaxy S3"; width: 720; height: 1280; dpi: 306}
+    }
     // Index of the initial preset used
     property int initialPreset: -1
     // Current preset index

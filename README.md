@@ -4,7 +4,7 @@ A simple helper window for QtQuick based applications, to let developers test di
 ## Main features
 - Manually set application width and height
 - Manually set dpi / pixelDensity (independent from Screen.pixelDensity)
-- Switch to landscape and portrait mode
+- Toggle between landscape and portrait mode
 - Use presets to quickly test your commonly used settings
 - Add buttons to manage custom actions, or even custom content to the bar
 - Can be disabled for production with a single property
@@ -18,7 +18,7 @@ Compatible with Qt 5.2 and higher, requires only QtQuick 2 and QtQuick Window mo
 You can either:
 
 - Copy [ResponsiveHelper.qml](ResponsiveHelper.qml) into your project
-- or clone the repository, and use it as you see fit. The `examples` folder contains:
+- or clone the repository (`--recursive`) and use it as you see fit. The `examples` folder contains:
   - [minimal-example](examples/minimal-example/main.qml)
   - [common-features-example](examples/common-features-example/main.qml)
 
@@ -40,7 +40,14 @@ Window {
 
 ### Presets
 
-You can add a set of resolutions/dpi shortcuts in the bar using `presets` property. Preset will modify automatically your `window` resolution. See [DPI](#dpi) to integrate DPI settings in your application.
+You can define a set of custom resolutions/dpi shortcuts using the `presets` property. Preset will modify automatically your `window` resolution. See [DPI](#dpi) to integrate DPI settings in your application.
+By default, presets contains the following devices:
+
+* Galaxy Note 9
+* Galaxy S7
+* Galaxy S5
+* iPhone 6/7
+* Galaxy S3
 
 `main.qml`
 ```
@@ -50,11 +57,11 @@ Window {
     ResponsiveHelper {
         targetWindow: window
 
-        // List your common presets to be applied to your application
+        // List the presets to be used for your application
         initialPreset: 0
         presets: ListModel {
             ListElement { width: 720; height: 1024; dpi: 150 } // Mobile
-            ListElement { width: 1920; height: 1080; dpi: 72 } // Desktop
+            ListElement { label: "Desktop"; width: 1920; height: 1080; dpi: 72 } // Desktop
         }
     }
 }
