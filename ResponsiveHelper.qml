@@ -14,6 +14,7 @@ Item {
 
     // Window element of the target application to test
     property Window targetWindow
+    property Item rootItem
 
     // Shows or hide responsive toolbar
     property bool showResponiveToolbar: true
@@ -66,28 +67,13 @@ Item {
     }
 
     function setWindowWidth(value) {
-        var newWidth = (1*value).toFixed(0);
-        var diff = value - targetWindow.width;
-
-        // Move the application window to keep our window at the same spot when possible
-        if (root.x < targetWindow.x / 2) {
-            var availableSpace = Screen.desktopAvailableWidth - targetWindow.x - targetWindow.width;
-            if (diff > 0 && availableSpace <= diff)
-                targetWindow.x -= diff - availableSpace;
-        }
-        else {
-            if (diff < 0)
-                targetWindow.x -= diff;
-            else if (targetWindow.x > 0)
-                targetWindow.x = Math.max(0, targetWindow.x - diff)
-        }
-
-        targetWindow.width = newWidth;
+        var width = (1*value).toFixed(0);
+        d.applyWindowSize(width, d.currentHeight)
     }
 
     function setWindowHeight(value) {
-        var newHeight = (1*value).toFixed(0);
-        targetWindow.height = newHeight;
+        var height = (1*value).toFixed(0);
+        d.applyWindowSize(d.currentWidth, height)
     }
 
     //**********************
@@ -99,7 +85,9 @@ Item {
         }
 
         d.initialWidth = targetWindow.width;
+        d.currentWidth = targetWindow.width;
         d.initialHeight = targetWindow.height;
+        d.currentHeight = targetWindow.height;
         d.initialPixelDensity = root.pixelDensity;
     }
 
@@ -117,7 +105,11 @@ Item {
         id: d
         property int initialWidth
         property int initialHeight
+        property int currentWidth
+        property int currentHeight
         property real initialPixelDensity: Screen.pixelDensity
+        property real widthMaxScale: 1
+        property real heightMaxScale: 1
 
         property int textHeight: 20
 
@@ -150,6 +142,62 @@ Item {
 
             if (presets.get(index).dpi)
                 setDpi(presets.get(index).dpi)
+        }
+
+        function applyWindowSize(width, height) {
+            d.currentWidth = width;
+            d.currentHeight = height;
+
+            if (root.scaleItem) {
+                if (width > Screen.desktopAvailableWidth) {
+                    d.widthMaxScale = 0.90 * (Screen.desktopAvailableWidth / width);
+                } else {
+                    d.widthMaxScale = 1;
+                }
+
+                if (height > Screen.desktopAvailableHeight) {
+                    d.heightMaxScale = 0.90 * (Screen.desktopAvailableHeight / height);
+                } else {
+                    d.heightMaxScale = 1;
+                }
+
+                var scale = Math.min(d.widthMaxScale, d.heightMaxScale);
+                var actualWidth = scale * width;
+                var actualHeight = scale * height;
+
+                if (targetWindow.x + actualWidth > Screen.desktopAvailableWidth) {
+                    targetWindow.x = Screen.desktopAvailableWidth - actualWidth;
+                }
+                if (targetWindow.y + actualHeight > Screen.desktopAvailableHeight) {
+                    targetWindow.y = Screen.desktopAvailableHeight - actualHeight;
+                }
+
+                targetWindow.width = actualWidth;
+                targetWindow.height = actualHeight;
+                root.scaleItem.scale = scale;
+                root.scaleItem.width = width;
+                root.scaleItem.height = height;
+            } else {
+                targetWindow.width = width;
+                targetWindow.height = height;
+            }
+
+            /*var diff = value - targetWindow.width;
+
+            // Move the application window to keep our window at the same spot when possible
+            if (root.x < targetWindow.x / 2) {
+                var availableSpace = Screen.desktopAvailableWidth - targetWindow.x - targetWindow.width;
+                if (diff > 0 && availableSpace <= diff)
+                    targetWindow.x -= diff - availableSpace;
+            }
+            else {
+                if (diff < 0)
+                    targetWindow.x -= diff;
+                else if (targetWindow.x > 0)
+                    targetWindow.x = Math.max(0, targetWindow.x - diff)
+            }
+
+            targetWindow.width = newWidth;*/
         }
     }
 
@@ -664,7 +712,7 @@ Item {
                             width: parent.width / 2
                             property int minimum: 10
                             property int maximum: 5000
-                            text: root.targetWindow.width
+                            text: d.currentWidth
 
                             onEditingFinished: {
                                 root.setWindowWidth(value)
@@ -821,7 +869,7 @@ Item {
                             //---- Redefinitions ----
                             id: heightEdit
                             width: parent.width / 2
-                            text: root.targetWindow.height
+                            text: d.currentHeight
                             property int minimum: 10
                             property int maximum: 5000
 

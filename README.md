@@ -40,7 +40,6 @@ Window {
 
 ### Presets
 
-You can define a set of custom resolutions/dpi shortcuts using the `presets` property. Preset will modify automatically your `window` resolution. See [DPI](#dpi) to integrate DPI settings in your application.
 By default, presets contains the following devices:
 
 * Galaxy Note 9
@@ -48,6 +47,10 @@ By default, presets contains the following devices:
 * Galaxy S5
 * iPhone 6/7
 * Galaxy S3
+
+Preset will modify automatically your `window` resolution. See [DPI](#dpi) to integrate DPI settings in your application.
+
+You can define a set of custom resolutions/dpi shortcuts using the `presets` property.
 
 `main.qml`
 ```

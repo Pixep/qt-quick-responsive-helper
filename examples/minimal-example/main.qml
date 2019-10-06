@@ -8,21 +8,27 @@ Window {
     height: 480
     title: qsTr("Responsive helper example")
 
+    //------------------------------------------------------------
+    //  Simple usage example
+    //------------------------------------------------------------
+    property real scaleFactor: width / 640
+    property real dpiScaleFactor: 72 / 20
+
     // Minimal example, simply include this in your QML
     ResponsiveHelper {
         id: helperBar
         targetWindow: window
-
+        scaleItem: scaleItemd
         // Place it where you want
         anchors.left: parent.right
         anchors.leftMargin: 30
     }
 
-    //------------------------------------------------------------
-    //  Simple usage example
-    //------------------------------------------------------------
-    property real scaleFactor: width / 640
-    property real dpiScaleFactor: helperBar.dpi / 20
+    Item {
+        id: scaleItemd
+        anchors.centerIn: parent
+        width: parent.width
+        height: parent.height
 
     Rectangle {
         id: header
@@ -66,5 +72,6 @@ Window {
                 }
             }
         }
+    }
     }
 }

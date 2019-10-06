@@ -14,6 +14,7 @@ Item {
 
     // Window element of the target application to test
     property Window targetWindow
+    property Item rootItem
 
     // Shows or hide responsive toolbar
     property bool showResponiveToolbar: true
@@ -50,6 +51,10 @@ Item {
     readonly property int initialHeight: d.initialHeight
     readonly property int initialPixelDensity: d.initialPixelDensity
 
+    // Current width/height
+    readonly property int currentWidth: d.currentWidth
+    readonly property int currentHeight: d.currentHeight
+
     // Bar width
     readonly property int defaultBarWidth: 125
 
@@ -66,28 +71,13 @@ Item {
     }
 
     function setWindowWidth(value) {
-        var newWidth = (1*value).toFixed(0);
-        var diff = value - targetWindow.width;
-
-        // Move the application window to keep our window at the same spot when possible
-        if (root.x < targetWindow.x / 2) {
-            var availableSpace = Screen.desktopAvailableWidth - targetWindow.x - targetWindow.width;
-            if (diff > 0 && availableSpace <= diff)
-                targetWindow.x -= diff - availableSpace;
-        }
-        else {
-            if (diff < 0)
-                targetWindow.x -= diff;
-            else if (targetWindow.x > 0)
-                targetWindow.x = Math.max(0, targetWindow.x - diff)
-        }
-
-        targetWindow.width = newWidth;
+        var width = (1*value).toFixed(0);
+        d.applyWindowSize(width, d.currentHeight)
     }
 
     function setWindowHeight(value) {
-        var newHeight = (1*value).toFixed(0);
-        targetWindow.height = newHeight;
+        var height = (1*value).toFixed(0);
+        d.applyWindowSize(d.currentWidth, height)
     }
 
     //**********************
@@ -99,7 +89,9 @@ Item {
         }
 
         d.initialWidth = targetWindow.width;
+        d.currentWidth = targetWindow.width;
         d.initialHeight = targetWindow.height;
+        d.currentHeight = targetWindow.height;
         d.initialPixelDensity = root.pixelDensity;
     }
 
@@ -119,7 +111,14 @@ Item {
         property int initialHeight
         property real initialPixelDensity: Screen.pixelDensity
 
+        property int currentWidth
+        property int currentHeight
+
+        property real widthMaxScale: 1
+        property real heightMaxScale: 1
+
         property int textHeight: 20
+        readonly property real sizeIncrementFactor: 1.1;
 
         function updateCurrentPreset() {
             var preset = presets.get(root.currentPreset);
@@ -150,6 +149,64 @@ Item {
 
             if (presets.get(index).dpi)
                 setDpi(presets.get(index).dpi)
+        }
+
+        function applyWindowSize(width, height) {
+            d.currentWidth = width;
+            d.currentHeight = height;
+
+            var previousWindowWidth = targetWindow.width;
+            var previousWindowX = targetWindow.x;
+
+            if (root.scaleItem) {
+                if (width > Screen.desktopAvailableWidth) {
+                    d.widthMaxScale = 0.90 * (Screen.desktopAvailableWidth / width);
+                } else {
+                    d.widthMaxScale = 1;
+                }
+
+                if (height > Screen.desktopAvailableHeight) {
+                    d.heightMaxScale = 0.90 * (Screen.desktopAvailableHeight / height);
+                } else {
+                    d.heightMaxScale = 1;
+                }
+
+                var scale = Math.min(d.widthMaxScale, d.heightMaxScale);
+                var actualWidth = scale * width;
+                var actualHeight = scale * height;
+
+                if (targetWindow.x + actualWidth > Screen.desktopAvailableWidth) {
+                    targetWindow.x = Screen.desktopAvailableWidth - actualWidth;
+                }
+                if (targetWindow.y + actualHeight > Screen.desktopAvailableHeight) {
+                    targetWindow.y = Screen.desktopAvailableHeight - actualHeight;
+                }
+
+                targetWindow.width = actualWidth;
+                targetWindow.height = actualHeight;
+                root.scaleItem.scale = scale;
+                root.scaleItem.width = width;
+                root.scaleItem.height = height;
+            } else {
+                targetWindow.width = width;
+                targetWindow.height = height;
+            }
+
+
+            var widthDelta = targetWindow.width - previousWindowWidth;
+
+            // Move the application window to keep our window at the same spot when possible
+            if (root.x < targetWindow.x / 2) {
+                var availableSpace = Screen.desktopAvailableWidth - previousWindowX - previousWindowWidth;
+                if (widthDelta > 0 && availableSpace <= widthDelta)
+                    targetWindow.x -= widthDelta - availableSpace;
+            }
+            else {
+                if (widthDelta < 0)
+                    targetWindow.x -= widthDelta;
+                else if (previousWindowX > 0)
+                    targetWindow.x = Math.max(0, previousWindowX - widthDelta);
+            }
         }
     }
 
@@ -274,9 +331,7 @@ Item {
                         width: parent.width
                         text: (targetWindow.height > targetWindow.width) ? "Landscape" : "Portrait"
                         onClicked: {
-                            var height = targetWindow.height
-                            root.setWindowHeight(root.targetWindow.width)
-                            root.setWindowWidth(height)
+                            d.applyWindowSize(d.currentHeight, d.currentWidth);
                         }
                     }
 
@@ -284,9 +339,8 @@ Item {
                         text: "Reset"
                         width: parent.width
                         onClicked: {
-                            root.setWindowWidth(d.initialWidth)
-                            root.setWindowHeight(d.initialHeight)
-                            root.pixelDensity = d.initialPixelDensity
+                            d.applyWindowSize(d.initialWidth, d.initialHeight);
+                            root.pixelDensity = d.initialPixelDensity;
                         }
                     }
 
@@ -361,7 +415,7 @@ Item {
                             width: parent.width / 4
                             text: "-"
                             onClicked: {
-                                root.setWindowWidth(root.targetWindow.width / 1.1)
+                                root.setWindowWidth(d.currentWidth / d.sizeIncrementFactor)
                             }
                         }
                         @TextField {
@@ -369,7 +423,7 @@ Item {
                             width: parent.width / 2
                             minimum: 10
                             maximum: 5000
-                            text: root.targetWindow.width
+                            text: d.currentWidth
 
                             onEditingFinished: {
                                 root.setWindowWidth(value)
@@ -381,7 +435,7 @@ Item {
                             width: parent.width / 4
                             text: "+"
                             onClicked: {
-                                root.setWindowWidth(root.targetWindow.width * 1.1)
+                                root.setWindowWidth(d.currentWidth * d.sizeIncrementFactor)
                             }
                         }
                     }
@@ -409,13 +463,13 @@ Item {
                             width: parent.width / 4
                             text: "-"
                             onClicked: {
-                                root.setWindowHeight(root.targetWindow.height / 1.1)
+                                root.setWindowHeight(d.currentHeight / d.sizeIncrementFactor)
                             }
                         }
                         @TextField {
                             id: heightEdit
                             width: parent.width / 2
-                            text: root.targetWindow.height
+                            text: d.currentHeight
                             minimum: 10
                             maximum: 5000
 
@@ -429,7 +483,7 @@ Item {
                             width: parent.width / 4
                             text: "+"
                             onClicked: {
-                                root.setWindowHeight(root.targetWindow.height * 1.1)
+                                root.setWindowHeight(d.currentHeight * d.sizeIncrementFactor)
                             }
                         }
                     }
