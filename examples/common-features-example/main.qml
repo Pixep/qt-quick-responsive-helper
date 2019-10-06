@@ -29,7 +29,7 @@ Window {
         initialPreset: 0
         presets: ListModel {
             ListElement { width: 720; height: 1024; dpi: 150}
-            ListElement { width: 480; height: 800 }
+            ListElement { label: "My 800x480 preset"; width: 480; height: 800; dpi: 72 }
         }
 
         // Your custom action buttons

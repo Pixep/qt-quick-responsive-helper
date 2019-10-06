@@ -448,9 +448,15 @@ Item {
                         @Button {
                             width: parent.width
                             text: {
-                                var label = model.width + " x " + model.height;
-                                if (model.dpi)
-                                    label += " (" + model.dpi + "dpi)";
+                                var label = "";
+                                if (model.label) {
+                                    label = model.label;
+                                } else {
+                                    label = model.width + " x " + model.height;
+
+                                    if (model.dpi)
+                                        label += " (" + model.dpi + "dpi)";
+                                }
 
                                 if (root.currentPreset === index)
                                     return "[" + label + "]";
