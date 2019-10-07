@@ -11,7 +11,7 @@ A simple helper window for QtQuick based applications, to let developers test di
 
 Compatible with Qt 5.2 and higher, requires only QtQuick 2 and QtQuick Window module (for now).
 
-![Responsive helper window screenshot](http://i.imgur.com/SQZYz9U.png)
+![Responsive helper demo](doc/demo.gif)
 
 ## Installation
 
@@ -38,6 +38,8 @@ Window {
 
 ## Additional features
 
+![Responsive helper window screenshot](doc/custom-presets-buttons.png)
+
 ### Presets
 
 By default, presets contains the following devices:
@@ -49,8 +51,6 @@ By default, presets contains the following devices:
 * Galaxy S3
 
 Preset will modify automatically your `window` resolution. See [DPI](#dpi) to integrate DPI settings in your application.
-
-![Responsive helper demo](doc/demo.gif)
 
 You can define a set of custom resolutions/dpi shortcuts using the `presets` property.
 
@@ -118,6 +118,40 @@ Window {
 You can now use the `rootItem` property to define the root element that will be scaled in order to fit the content on the screen. This makes it possible to test high resolutions on a regular monitor.
 
 See the [minimal-example](examples/minimal-example/main.qml) for a working example.
+
+### Additional action buttons
+
+Add additional action buttons with the `actions` property.
+
+```
+    // Your custom action buttons
+    actions: ListModel {
+        ListElement { text: "MyAction1" }
+        ListElement { text: "MyAction2" }
+    }
+
+    // Handle clicks on your actions
+    onActionClicked: {
+        console.log("Action " + actionIndex + " clicked")
+    }
+```
+
+### Custom content
+
+Custom content can also be added to the bar using the `extraContent` property.
+
+```
+    // Your buttons or content
+    extraContent: [
+        Button {
+            text: "My Quit Button"
+            width: parent.width
+            onClicked: {
+                window.close()
+            }
+        }
+    ]
+```
 
 ## Example
 
