@@ -8,70 +8,83 @@ Window {
     height: 480
     title: qsTr("Responsive helper example")
 
-    //------------------------------------------------------------
-    //  Simple usage example
-    //------------------------------------------------------------
-    property real scaleFactor: width / 640
-    property real dpiScaleFactor: 72 / 20
-
     // Minimal example, simply include this in your QML
     ResponsiveHelper {
         id: helperBar
+
+        // Reference to your Window
         targetWindow: window
-        scaleItem: scaleItemd
-        // Place it where you want
+
+        // Reference to the content root, for resizing and scaling
+        // It is not possible to use window.contentItem. If not set,
+        // the content will not be scaled to fit on the screen.
+        rootItem: root
+
+        // Position it where you want
         anchors.left: parent.right
         anchors.leftMargin: 30
     }
 
+    // Root item used to scale the content to fit on the screen.
     Item {
-        id: scaleItemd
+        id: root
         anchors.centerIn: parent
+
+        // width, height and scale will be adapted automatically
         width: parent.width
         height: parent.height
 
-    Rectangle {
-        id: header
-        width: parent.width
-        height: 30 * window.scaleFactor
-        color: "#DDD"
+        // Scale with resolution, from a 640x480 reference
+        property real resolutionScaleFactor: (width * height) / (640 * 480)
+        // Scale with pixel density, from a 72ppi reference
+        property real dpiScaleFactor: helperBar.dpi / 72
 
-        Text {
-            id: textEdit
-            text: qsTr("Some text")
-            font.pixelSize: 20 * window.scaleFactor
-            anchors.centerIn: parent
-        }
-    }
-
-    Flickable {
-        width: parent.width
-        anchors.top: header.bottom
-        anchors.topMargin: 10
-        height: parent.height - header.height - header.y
-        contentHeight: flow.height
-        clip: true
-
-        Grid {
-            id: flow
+        Rectangle {
+            id: header
+            width: parent.width
             height: childrenRect.height
-            width: columns * (spacing + rectSize)
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 10
-            columns: parent.width / (spacing + rectSize)
-            rows: 15
+            color: "#DDD"
 
-            property int rectSize: 25 * window.dpiScaleFactor
-
-            Repeater {
-                model: 15
-                Rectangle {
-                    width: parent.rectSize
-                    height: width
-                    color: "blue"
+            Column {
+                Text {
+                    text: qsTr("Scales with resolution")
+                    font.pixelSize: 20 * root.resolutionScaleFactor
+                }
+                Text {
+                    text: qsTr("Scales with DPI")
+                    font.pixelSize: 20 * root.dpiScaleFactor
                 }
             }
         }
-    }
+
+        Flickable {
+            width: parent.width
+            anchors.top: header.bottom
+            anchors.topMargin: 10
+            height: parent.height - header.height - header.y
+            contentHeight: flow.height
+            clip: true
+
+            Grid {
+                id: flow
+                height: childrenRect.height
+                width: columns * (spacing + rectSize)
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 10
+                columns: parent.width / (spacing + rectSize)
+                rows: 15
+
+                property int rectSize: 25 * root.dpiScaleFactor
+
+                Repeater {
+                    model: 15
+                    Rectangle {
+                        width: parent.rectSize
+                        height: width
+                        color: "blue"
+                    }
+                }
+            }
+        }
     }
 }

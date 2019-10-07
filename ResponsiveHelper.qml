@@ -32,6 +32,14 @@ Item {
     // Current preset index
     property int currentPreset: -1
 
+    // Portrait or Landscape orientation
+    readonly property int portraitMode: 0
+    readonly property int landscapeMode: 1
+    readonly property int orientation:
+            (d.currentHeight > d.currentWidth)
+                ? portraitMode
+                : landscapeMode
+
     // List of custom actions
     property ListModel actions: ListModel {}
 
@@ -44,12 +52,16 @@ Item {
     // Custom pixel density value
     property real pixelDensity: Screen.pixelDensity
     // Custom DPI value
-    readonly property int dpi: pixelDensity * 25.4
+    readonly property int dpi: pixelDensity * d.pixelDensityToPpiRatio
 
     // Initial application window settings
     readonly property int initialWidth: d.initialWidth
     readonly property int initialHeight: d.initialHeight
     readonly property int initialPixelDensity: d.initialPixelDensity
+
+    // Current width/height
+    readonly property int currentWidth: d.currentWidth
+    readonly property int currentHeight: d.currentHeight
 
     // Bar width
     readonly property int defaultBarWidth: 125
@@ -63,7 +75,7 @@ Item {
     // Public functions
     //
     function setDpi(dpiValue) {
-        pixelDensity = dpiValue / 25.4;
+        pixelDensity = dpiValue / d.pixelDensityToPpiRatio;
     }
 
     function setWindowWidth(value) {
@@ -103,15 +115,20 @@ Item {
 
     QtObject {
         id: d
+        readonly property real pixelDensityToPpiRatio: 25.4
         property int initialWidth
         property int initialHeight
+        property real initialPixelDensity: Screen.pixelDensity
+        property real initialDpi: initialPixelDensity * pixelDensityToPpiRatio
+
         property int currentWidth
         property int currentHeight
-        property real initialPixelDensity: Screen.pixelDensity
+
         property real widthMaxScale: 1
         property real heightMaxScale: 1
 
         property int textHeight: 20
+        readonly property real sizeIncrementFactor: 1.1;
 
         function updateCurrentPreset() {
             var preset = presets.get(root.currentPreset);
@@ -137,26 +154,28 @@ Item {
                 return;
             }
 
-            setWindowWidth(presets.get(index).width)
-            setWindowHeight(presets.get(index).height)
+            applyWindowSize(presets.get(index).width, presets.get(index).height);
 
             if (presets.get(index).dpi)
                 setDpi(presets.get(index).dpi)
+            else
+                setDpi(d.initialDpi)
         }
 
         function applyWindowSize(width, height) {
-            d.currentWidth = width;
-            d.currentHeight = height;
+            var previousWindowWidth = targetWindow.width;
+            var previousWindowX = targetWindow.x;
 
-            if (root.scaleItem) {
-                if (width > Screen.desktopAvailableWidth) {
-                    d.widthMaxScale = 0.90 * (Screen.desktopAvailableWidth / width);
+            if (root.rootItem) {
+                var maxSizeFactor = 0.85;
+                if (width > maxSizeFactor * Screen.width) {
+                    d.widthMaxScale = (maxSizeFactor * Screen.width / width);
                 } else {
                     d.widthMaxScale = 1;
                 }
 
-                if (height > Screen.desktopAvailableHeight) {
-                    d.heightMaxScale = 0.90 * (Screen.desktopAvailableHeight / height);
+                if (height > maxSizeFactor * Screen.height) {
+                    d.heightMaxScale = (maxSizeFactor * Screen.height / height);
                 } else {
                     d.heightMaxScale = 1;
                 }
@@ -165,39 +184,40 @@ Item {
                 var actualWidth = scale * width;
                 var actualHeight = scale * height;
 
-                if (targetWindow.x + actualWidth > Screen.desktopAvailableWidth) {
-                    targetWindow.x = Screen.desktopAvailableWidth - actualWidth;
+                if (targetWindow.x + actualWidth > Screen.width) {
+                    targetWindow.x = (Screen.width - actualWidth) / 2;
                 }
-                if (targetWindow.y + actualHeight > Screen.desktopAvailableHeight) {
-                    targetWindow.y = Screen.desktopAvailableHeight - actualHeight;
+                if (targetWindow.y + actualHeight > Screen.height) {
+                    targetWindow.y = (Screen.height - actualHeight) / 2;
                 }
 
                 targetWindow.width = actualWidth;
                 targetWindow.height = actualHeight;
-                root.scaleItem.scale = scale;
-                root.scaleItem.width = width;
-                root.scaleItem.height = height;
+                root.rootItem.scale = scale;
+                root.rootItem.width = width;
+                root.rootItem.height = height;
             } else {
                 targetWindow.width = width;
                 targetWindow.height = height;
             }
 
-            /*var diff = value - targetWindow.width;
+            var widthDelta = targetWindow.width - previousWindowWidth;
 
             // Move the application window to keep our window at the same spot when possible
             if (root.x < targetWindow.x / 2) {
-                var availableSpace = Screen.desktopAvailableWidth - targetWindow.x - targetWindow.width;
-                if (diff > 0 && availableSpace <= diff)
-                    targetWindow.x -= diff - availableSpace;
+                var availableSpace = Screen.width - previousWindowX - previousWindowWidth;
+                if (widthDelta > 0 && availableSpace <= widthDelta)
+                    targetWindow.x -= widthDelta - availableSpace;
             }
             else {
-                if (diff < 0)
-                    targetWindow.x -= diff;
-                else if (targetWindow.x > 0)
-                    targetWindow.x = Math.max(0, targetWindow.x - diff)
+                if (widthDelta < 0)
+                    targetWindow.x -= widthDelta;
+                else if (previousWindowX > 0)
+                    targetWindow.x = Math.max(0, previousWindowX - widthDelta);
             }
 
-            targetWindow.width = newWidth;*/
+            d.currentWidth = width;
+            d.currentHeight = height;
         }
     }
 
@@ -392,11 +412,10 @@ Item {
                         }
                         //---- Redefinitions ----
                         width: parent.width
-                        property string text: (targetWindow.height > targetWindow.width) ? "Landscape" : "Portrait"
+                        property string text: (root.orientation === root.portraitMode) ? "Portrait"
+                                                                       : "Landscape"
                         onClicked: {
-                            var height = targetWindow.height
-                            root.setWindowHeight(root.targetWindow.width)
-                            root.setWindowWidth(height)
+                            d.applyWindowSize(d.currentHeight, d.currentWidth);
                         }
                     }
 
@@ -440,9 +459,8 @@ Item {
                         property string text: "Reset"
                         width: parent.width
                         onClicked: {
-                            root.setWindowWidth(d.initialWidth)
-                            root.setWindowHeight(d.initialHeight)
-                            root.pixelDensity = d.initialPixelDensity
+                            d.applyWindowSize(d.initialWidth, d.initialHeight);
+                            root.pixelDensity = d.initialPixelDensity;
                         }
                     }
 
@@ -663,7 +681,7 @@ Item {
                             width: parent.width / 4
                             property string text: "-"
                             onClicked: {
-                                root.setWindowWidth(root.targetWindow.width / 1.1)
+                                root.setWindowWidth(d.currentWidth / d.sizeIncrementFactor)
                             }
                         }
                         //---------------
@@ -759,7 +777,7 @@ Item {
                             width: parent.width / 4
                             property string text: "+"
                             onClicked: {
-                                root.setWindowWidth(root.targetWindow.width * 1.1)
+                                root.setWindowWidth(d.currentWidth * d.sizeIncrementFactor)
                             }
                         }
                     }
@@ -822,7 +840,7 @@ Item {
                             width: parent.width / 4
                             property string text: "-"
                             onClicked: {
-                                root.setWindowHeight(root.targetWindow.height / 1.1)
+                                root.setWindowHeight(d.currentHeight / d.sizeIncrementFactor)
                             }
                         }
                         //---------------
@@ -918,7 +936,7 @@ Item {
                             width: parent.width / 4
                             property string text: "+"
                             onClicked: {
-                                root.setWindowHeight(root.targetWindow.height * 1.1)
+                                root.setWindowHeight(d.currentHeight * d.sizeIncrementFactor)
                             }
                         }
                     }

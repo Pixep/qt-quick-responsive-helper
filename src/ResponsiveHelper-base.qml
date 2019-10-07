@@ -32,6 +32,14 @@ Item {
     // Current preset index
     property int currentPreset: -1
 
+    // Portrait or Landscape orientation
+    readonly property int portraitMode: 0
+    readonly property int landscapeMode: 1
+    readonly property int orientation:
+            (d.currentHeight > d.currentWidth)
+                ? portraitMode
+                : landscapeMode
+
     // List of custom actions
     property ListModel actions: ListModel {}
 
@@ -44,7 +52,7 @@ Item {
     // Custom pixel density value
     property real pixelDensity: Screen.pixelDensity
     // Custom DPI value
-    readonly property int dpi: pixelDensity * 25.4
+    readonly property int dpi: pixelDensity * d.pixelDensityToPpiRatio
 
     // Initial application window settings
     readonly property int initialWidth: d.initialWidth
@@ -67,7 +75,7 @@ Item {
     // Public functions
     //
     function setDpi(dpiValue) {
-        pixelDensity = dpiValue / 25.4;
+        pixelDensity = dpiValue / d.pixelDensityToPpiRatio;
     }
 
     function setWindowWidth(value) {
@@ -107,9 +115,11 @@ Item {
 
     QtObject {
         id: d
+        readonly property real pixelDensityToPpiRatio: 25.4
         property int initialWidth
         property int initialHeight
         property real initialPixelDensity: Screen.pixelDensity
+        property real initialDpi: initialPixelDensity * pixelDensityToPpiRatio
 
         property int currentWidth
         property int currentHeight
@@ -144,29 +154,28 @@ Item {
                 return;
             }
 
-            setWindowWidth(presets.get(index).width)
-            setWindowHeight(presets.get(index).height)
+            applyWindowSize(presets.get(index).width, presets.get(index).height);
 
             if (presets.get(index).dpi)
                 setDpi(presets.get(index).dpi)
+            else
+                setDpi(d.initialDpi)
         }
 
         function applyWindowSize(width, height) {
-            d.currentWidth = width;
-            d.currentHeight = height;
-
             var previousWindowWidth = targetWindow.width;
             var previousWindowX = targetWindow.x;
 
-            if (root.scaleItem) {
-                if (width > Screen.desktopAvailableWidth) {
-                    d.widthMaxScale = 0.90 * (Screen.desktopAvailableWidth / width);
+            if (root.rootItem) {
+                var maxSizeFactor = 0.85;
+                if (width > maxSizeFactor * Screen.width) {
+                    d.widthMaxScale = (maxSizeFactor * Screen.width / width);
                 } else {
                     d.widthMaxScale = 1;
                 }
 
-                if (height > Screen.desktopAvailableHeight) {
-                    d.heightMaxScale = 0.90 * (Screen.desktopAvailableHeight / height);
+                if (height > maxSizeFactor * Screen.height) {
+                    d.heightMaxScale = (maxSizeFactor * Screen.height / height);
                 } else {
                     d.heightMaxScale = 1;
                 }
@@ -175,29 +184,28 @@ Item {
                 var actualWidth = scale * width;
                 var actualHeight = scale * height;
 
-                if (targetWindow.x + actualWidth > Screen.desktopAvailableWidth) {
-                    targetWindow.x = Screen.desktopAvailableWidth - actualWidth;
+                if (targetWindow.x + actualWidth > Screen.width) {
+                    targetWindow.x = (Screen.width - actualWidth) / 2;
                 }
-                if (targetWindow.y + actualHeight > Screen.desktopAvailableHeight) {
-                    targetWindow.y = Screen.desktopAvailableHeight - actualHeight;
+                if (targetWindow.y + actualHeight > Screen.height) {
+                    targetWindow.y = (Screen.height - actualHeight) / 2;
                 }
 
                 targetWindow.width = actualWidth;
                 targetWindow.height = actualHeight;
-                root.scaleItem.scale = scale;
-                root.scaleItem.width = width;
-                root.scaleItem.height = height;
+                root.rootItem.scale = scale;
+                root.rootItem.width = width;
+                root.rootItem.height = height;
             } else {
                 targetWindow.width = width;
                 targetWindow.height = height;
             }
 
-
             var widthDelta = targetWindow.width - previousWindowWidth;
 
             // Move the application window to keep our window at the same spot when possible
             if (root.x < targetWindow.x / 2) {
-                var availableSpace = Screen.desktopAvailableWidth - previousWindowX - previousWindowWidth;
+                var availableSpace = Screen.width - previousWindowX - previousWindowWidth;
                 if (widthDelta > 0 && availableSpace <= widthDelta)
                     targetWindow.x -= widthDelta - availableSpace;
             }
@@ -207,6 +215,9 @@ Item {
                 else if (previousWindowX > 0)
                     targetWindow.x = Math.max(0, previousWindowX - widthDelta);
             }
+
+            d.currentWidth = width;
+            d.currentHeight = height;
         }
     }
 
@@ -329,7 +340,8 @@ Item {
 
                     @Button {
                         width: parent.width
-                        text: (targetWindow.height > targetWindow.width) ? "Landscape" : "Portrait"
+                        text: (root.orientation === root.portraitMode) ? "Portrait"
+                                                                       : "Landscape"
                         onClicked: {
                             d.applyWindowSize(d.currentHeight, d.currentWidth);
                         }
