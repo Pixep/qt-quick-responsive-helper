@@ -50,6 +50,8 @@ By default, presets contains the following devices:
 
 Preset will modify automatically your `window` resolution. See [DPI](#dpi) to integrate DPI settings in your application.
 
+![Responsive helper demo](doc/demo.gif)
+
 You can define a set of custom resolutions/dpi shortcuts using the `presets` property.
 
 `main.qml`
