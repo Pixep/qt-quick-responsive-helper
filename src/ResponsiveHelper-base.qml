@@ -130,6 +130,8 @@ Item {
         property int currentWidth
         property int currentHeight
 
+        property int lastPresetSelected: root.initialPreset
+
         property real widthMaxScale: 1
         property real heightMaxScale: 1
 
@@ -359,6 +361,7 @@ Item {
                         onClicked: {
                             d.applyWindowSize(d.initialWidth, d.initialHeight);
                             root.pixelDensity = d.initialPixelDensity;
+                            d.lastPresetSelected = -1;
                         }
                     }
 
@@ -536,14 +539,12 @@ Item {
                                         label += " (" + model.dpi + "dpi)";
                                 }
 
-                                if (root.currentPreset === index)
-                                    return "[" + label + "]";
-
                                 return label;
                             }
-                            selected: root.currentPreset === index
+                            selected: d.lastPresetSelected === index
                             onClicked: {
                                 root.currentPreset = index;
+                                d.lastPresetSelected = index;
                             }
                         }
                     }
