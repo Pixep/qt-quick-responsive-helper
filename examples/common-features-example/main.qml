@@ -1,3 +1,9 @@
+//-------------------------------------------------
+// This file is available under the MIT license.
+// For more information, refer to "https://github.com/Pixep/qt-quick-responsive-helper"
+// Copyright 2017-2019, Adrien Leravat
+//-------------------------------------------------
+
 import QtQuick 2.2
 import QtQuick.Window 2.0
 import QtQuick.Controls 1.0
