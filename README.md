@@ -58,14 +58,27 @@ Window {
     id: window
 
     ResponsiveHelper {
+        id: helper
         targetWindow: window
+        rootItem: rootItem
 
         // List the presets to be used for your application
         initialPreset: 0
         presets: ListModel {
-            ListElement { width: 720; height: 1024; dpi: 150 } // Mobile
-            ListElement { label: "Desktop"; width: 1920; height: 1080; dpi: 72 } // Desktop
+            ListElement { label: "Galaxy S5"; width: 750; height: 1334; dpi: 326}
+            ListElement { label: "Desktop"; width: 1280; height: 1024; dpi: 72 }
         }
+    }
+
+    Item {
+        id: rootItem
+        // Let the helper manage the size and scale of the root Item, based on available space
+        anchors.centerIn: parent
+        width: parent.width
+        height: parent.height
+
+        // <Your content here!>
+        // Use `helper.dpi`, `helper.pixelDensity`, `rootItem.width`, or `rootItem.height`
     }
 }
 ```
@@ -98,6 +111,12 @@ Window {
 }
 ```
 
+### Scaling to fit screen
+
+You can now use the `rootItem` property to define the root element that will be scaled in order to fit the content on the screen. This makes it possible to test high resolutions on a regular monitor.
+
+See the [minimal-example](examples/minimal-example/main.qml) for a working example.
+
 ## Example
 
 The example below show presets, how to add custom actions (buttons) and even arbitrary content to the bar.
@@ -114,6 +133,7 @@ Window {
 
     ResponsiveHelper {
         targetWindow: window
+        rootItem: root
 
         anchors.left: parent.right
         anchors.leftMargin: 30
@@ -149,6 +169,15 @@ Window {
                 }
             }
         ]        
+    }
+
+    Item {
+        id: root
+        anchors.centerIn: parent
+        width: parent.width
+        height: parent.height
+
+        // Your app goes here!
     }
 }
 ```
